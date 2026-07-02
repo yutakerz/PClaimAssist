@@ -244,6 +244,11 @@ function navigateTo(section) {
     overlay && overlay.classList.remove('active');
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Trigger PDF rendering when entering a form section
+  if (['csf','cf2','cf3','pmrf'].includes(section) && typeof onFormSectionActivated === 'function') {
+    // Small delay lets the section become visible (display:block) before measuring width
+    setTimeout(() => onFormSectionActivated(section), 60);
+  }
 }
 
 document.querySelectorAll('.sidebar-item').forEach(item =>
@@ -291,10 +296,32 @@ function updateFormPreviews() {
       el.classList.remove('populated');
     }
   });
+  // Sync all duplicate data-autofill elements (e.g. split-screen right panels)
+  syncAllAutofillElements();
+  // Update PDF canvas overlays
+  if (typeof updateAllOverlays === 'function') updateAllOverlays();
   updateValidation();
   updateDashboardStats();
   updateSyncFieldChecks();
   updateSyncIndicator();
+}
+
+function syncAllAutofillElements() {
+  const seen = new Set();
+  document.querySelectorAll('[data-autofill]').forEach(el => {
+    const key = el.dataset.autofill;
+    if (seen.has(key)) return; // only process each key once
+    seen.add(key);
+    const val = state.data[key] || '';
+    document.querySelectorAll(`[data-autofill="${key}"]`).forEach(sibling => {
+      if (sibling === document.activeElement) return; // don't clobber the field being typed in
+      if (sibling.type === 'radio') {
+        sibling.checked = sibling.value === val;
+      } else if (sibling.tagName === 'SELECT' || sibling.tagName === 'TEXTAREA' || sibling.tagName === 'INPUT') {
+        if (sibling.value !== val) sibling.value = val;
+      }
+    });
+  });
 }
 
 function formatDate(iso) {
@@ -447,16 +474,6 @@ function loadSampleData() {
   navigateTo('patient');
 }
 
-['loadSampleBtn','loadSampleBtn2','loadSampleBtn3'].forEach(id => {
-  const btn = document.getElementById(id);
-  if (btn) btn.addEventListener('click', () =>
-    new bootstrap.Modal(document.getElementById('sampleDataModal')).show());
-});
-
-document.getElementById('confirmLoadSample').addEventListener('click', () => {
-  bootstrap.Modal.getInstance(document.getElementById('sampleDataModal')).hide();
-  loadSampleData();
-});
 
 document.getElementById('clearFormBtn').addEventListener('click', () => {
   const AM_DEFAULTS = { amPmAdmitted:'AM', amPmDischarge:'AM', amPmDelivery:'AM' };
