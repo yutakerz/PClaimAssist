@@ -665,3 +665,6 @@ function escHtml(str) {
 bindInputListeners();
 updateFormPreviews();
 navigateTo('dashboard');
+
+// Add this at the very bottom of js/app.js
+window.state = state;
