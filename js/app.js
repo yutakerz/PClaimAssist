@@ -113,11 +113,11 @@ function getComputedValue(key) {
     case 'obHistory':
       return (d.gravida || d.para) ? `G${d.gravida||'?'} P${d.para||'?'}` : '';
     case 'timeAdmittedStr':
-      return d.timeAdmitted ? `${d.timeAdmitted} ${d.amPmAdmitted}` : '';
+      return formatTime12h(d.timeAdmitted);
     case 'timeDischargeStr':
-      return d.timeDischarge ? `${d.timeDischarge} ${d.amPmDischarge}` : '';
+      return formatTime12h(d.timeDischarge);
     case 'deliveryTimeStr':
-      return d.deliveryTime ? `${d.deliveryTime} ${d.amPmDelivery}` : '';
+      return formatTime12h(d.deliveryTime);
     default:
       return d[key] || '';
   }
@@ -328,7 +328,19 @@ function formatDate(iso) {
   if (!iso) return '';
   const d = new Date(iso + 'T00:00:00');
   if (isNaN(d)) return iso;
-  return d.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${mm}-${dd}-${d.getFullYear()}`;
+}
+
+function formatTime12h(hhmm) {
+  if (!hhmm) return '';
+  const [hStr, mStr] = hhmm.split(':');
+  let h = parseInt(hStr, 10);
+  if (isNaN(h)) return hhmm;
+  const period = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${String(h).padStart(2, '0')}:${mStr} ${period}`;
 }
 
 function bindInputListeners() {
