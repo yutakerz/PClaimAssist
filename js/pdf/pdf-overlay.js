@@ -139,6 +139,45 @@ function scaleOverlayFonts(formKey) {
   });
 }
 
+/* ── Resolve one overlay field's display value ───────────────────
+   Supports plain computed/key lookups plus 3 generic field shapes,
+   used across CF3 page 2 to avoid a getComputedValue case per field:
+     checkbox:true        → '✓' if state.data[f.key] is truthy, or
+                             (with checkValue set) equals checkValue
+     dateComponent:'MM'|'DD'|'YYYY' → part of an ISO date at state.data[f.key]
+     timeComponent:'AM'|'PM'        → bare hh:mm at state.data[f.key],
+                             shown only when that period applies
+─────────────────────────────────────────────────────────────── */
+function resolveOverlayFieldValue(f) {
+  const data = window.state?.data || {};
+
+  if (f.checkbox) {
+    const raw = data[f.key];
+    const match = f.checkValue !== undefined ? raw === f.checkValue : !!raw;
+    return match ? '✓' : '';
+  }
+
+  if (f.dateComponent) {
+    const parts = (data[f.key] || '').split('-'); // ISO: [YYYY, MM, DD]
+    if (f.dateComponent === 'YYYY') return parts[0] || '';
+    if (f.dateComponent === 'MM')   return parts[1] || '';
+    return parts[2] || '';
+  }
+
+  if (f.timeComponent) {
+    const raw = data[f.key] || '';
+    const h = parseInt(raw.split(':')[0], 10);
+    if (isNaN(h)) return '';
+    const isPM = h >= 12;
+    if ((f.timeComponent === 'PM') !== isPM) return '';
+    return typeof window.bareTime === 'function' ? window.bareTime(raw) : raw;
+  }
+
+  const gcv = window.getComputedValue;
+  if (f.computed && typeof gcv === 'function') return gcv(f.computed);
+  return data[f.key] || '';
+}
+
 /* ── Update overlay text for one form ───────────────────── */
 function updateOverlayForForm(formKey) {
   const st      = pdfState[formKey];
@@ -149,15 +188,9 @@ function updateOverlayForForm(formKey) {
     const span = document.getElementById('pof-' + formKey + '-' + f.id);
     if (!span) return;
 
-    span.style.display = (f.page === curPage) ? '' : 'none';
+    span.classList.toggle('pdf-field--hidden', f.page !== curPage);
 
-    let val = '';
-    const gcv = window.getComputedValue;
-    if (typeof gcv === 'function') {
-      val = f.computed ? gcv(f.computed) : (window.state?.data?.[f.key] || '');
-    } else {
-      val = window.state?.data?.[f.key] || '';
-    }
+    const val = resolveOverlayFieldValue(f);
     span.textContent = val;
     span.classList.toggle('pdf-field--filled', !!val);
   });
@@ -219,22 +252,20 @@ async function exportFilledPDF(formKey) {
       if (!pg) return;
       const { width, height } = pg.getSize();
 
-      let val = '';
-      const gcv2 = window.getComputedValue;
-      if (typeof gcv2 === 'function') {
-        val = f.computed ? gcv2(f.computed) : (window.state?.data?.[f.key] || '');
-      } else {
-        val = window.state?.data?.[f.key] || '';
-      }
+      const val = resolveOverlayFieldValue(f);
       if (!val) return;
+      // pdf-lib's standard Helvetica uses WinAnsi encoding, which can't
+      // represent '✓' — substitute a safe ASCII mark for the exported PDF
+      // (the on-screen overlay still renders the real checkmark glyph).
+      const safeVal = String(val).replace(/✓/g, 'X');
 
       const x = (f.left / 100) * width;
       const baselineOffset = 6; // Increase this to push text further down when printing
-      const y = height - ((f.top / 100) * height) - baselineOffset; 
+      const y = height - ((f.top / 100) * height) - baselineOffset;
       const fs = f.fs || 7;
 
-      pg.drawText(String(val), {
-        x: x, 
+      pg.drawText(safeVal, {
+        x: x,
         y: y, 
         size: fs, 
         font: font,

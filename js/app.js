@@ -40,6 +40,55 @@ const state = {
     expectedDD:'', deliveryDate:'', deliveryTime:'', amPmDelivery:'AM',
     mannerOfDelivery:'', fetalOutcome:'', babySex:'', birthWeight:'', apgarScore:'',
     briefHistory:'',
+    /* Physical Examination – CF3 Part I, Section 7 */
+    vitalBP:'', vitalCR:'', vitalRR:'', vitalTemp:'',
+    peHEENT:'', peAbdomen:'', peChestLungs:'', peGU:'', peCVS:'', peSkinExtremities:'', peNeuroExam:'',
+    /* Course in the Wards / Lab Findings – CF3 Part I, Sections 8–9 */
+    courseInWards:'', labFindings:'',
+
+    /* CF3 Page 2 – Part II: Maternity Care Package */
+    initialPrenatalDate:'', vitalSignsNormal:false, pregnancyLowRisk:false,
+    obTerm:'', obPreterm:'', obAbortion:'', obLiving:'',
+    /* Obstetric risk factors (section 3) */
+    riskMultiplePregnancy:false, riskOvarianCyst:false, riskMyomaUteri:false,
+    riskPlacentaPrevia:false, riskMiscarriages:false, riskStillbirth:false,
+    riskPreeclampsia:false, riskEclampsia:false, riskPrematureContraction:false,
+    /* Medical/Surgical risk factors (section 4) */
+    riskHypertension:false, riskHeartDisease:false, riskDiabetes:false,
+    riskThyroidDisorder:false, riskObesity:false, riskAsthma:false,
+    riskEpilepsy:false, riskRenalDisease:false, riskBleedingDisorders:false,
+    riskPrevCesarian:false, riskUterineMyomectomy:false,
+    /* Delivery plan */
+    mcpOrientation:'',
+    /* Follow-up Prenatal Consultation grid (visits 2nd–12th) */
+    pncDate2:'', pncDate3:'', pncDate4:'', pncDate5:'', pncDate6:'', pncDate7:'',
+    pncDate8:'', pncDate9:'', pncDate10:'', pncDate11:'', pncDate12:'',
+    pncAog2:'', pncAog3:'', pncAog4:'', pncAog5:'', pncAog6:'', pncAog7:'',
+    pncAog8:'', pncAog9:'', pncAog10:'', pncAog11:'', pncAog12:'',
+    pncWeight2:'', pncWeight3:'', pncWeight4:'', pncWeight5:'', pncWeight6:'', pncWeight7:'',
+    pncWeight8:'', pncWeight9:'', pncWeight10:'', pncWeight11:'', pncWeight12:'',
+    pncCr2:'', pncCr3:'', pncCr4:'', pncCr5:'', pncCr6:'', pncCr7:'',
+    pncCr8:'', pncCr9:'', pncCr10:'', pncCr11:'', pncCr12:'',
+    pncRr2:'', pncRr3:'', pncRr4:'', pncRr5:'', pncRr6:'', pncRr7:'',
+    pncRr8:'', pncRr9:'', pncRr10:'', pncRr11:'', pncRr12:'',
+    pncBp2:'', pncBp3:'', pncBp4:'', pncBp5:'', pncBp6:'', pncBp7:'',
+    pncBp8:'', pncBp9:'', pncBp10:'', pncBp11:'', pncBp12:'',
+    pncTemp2:'', pncTemp3:'', pncTemp4:'', pncTemp5:'', pncTemp6:'', pncTemp7:'',
+    pncTemp8:'', pncTemp9:'', pncTemp10:'', pncTemp11:'', pncTemp12:'',
+    /* Maternal / Birth Outcome extras not already covered by Part I fields */
+    obstetricIndex:'', pregnancyUterineAOG:'', presentation:'',
+    /* Postpartum follow-up + discharge */
+    postpartumFollowupDate:'',
+    /* Postpartum Care checklist (sections 13–18) */
+    ppPerinealDone:false, ppPerinealRemarks:'',
+    ppComplicationsDone:false, ppComplicationsRemarks:'',
+    ppBreastfeedingDone:false, ppBreastfeedingRemarks:'',
+    ppFamilyPlanningDone:false, ppFamilyPlanningRemarks:'',
+    ppFPServiceDone:false, ppFPServiceRemarks:'',
+    ppReferredVSSDone:false, ppReferredVSSRemarks:'',
+    ppScheduleNextDone:false, ppScheduleNextRemarks:'',
+    /* Certification of Attending Physician/Midwife (section 19) */
+    attendingPhysicianName:'', dateSigned:'',
   }
 };
 
@@ -63,7 +112,7 @@ const SAMPLE_DATA = {
   chiefComplaint:'Labor pains, full-term pregnancy',
   admissionDx:'Term Pregnancy in Active Labor, 39 weeks AOG',
   dischargeDx:'Normal Spontaneous Delivery, Full Term, Live Birth',
-  hciPAN:'0000012345', hciName:'Mapagpala Maternity Clinic',
+  hciPAN:'000001234', hciName:'Mapagpala Maternity Clinic',
   hciStreet:'456 Bonifacio Avenue', hciCity:'Quezon City', hciProvince:'Metro Manila',
   employerPEN:'', employerPhone:'', employerName:'',
   civilStatus:'Married', placeOfBirth:'Quezon City, Metro Manila', citizenship:'Filipino',
@@ -76,6 +125,46 @@ const SAMPLE_DATA = {
   mannerOfDelivery:'Normal Spontaneous Delivery (NSD)',
   fetalOutcome:'Live Birth', babySex:'Female', birthWeight:'3200', apgarScore:'9',
   briefHistory:'G2P1 (1001), 39 weeks AOG by LMP. Admitted for active labor with regular uterine contractions every 5 minutes. No previous complications noted.',
+  vitalBP:'120/80', vitalCR:'82', vitalRR:'18', vitalTemp:'36.5',
+  peHEENT:'Anicteric sclerae, pink palpebral conjunctivae', peAbdomen:'Gravid, FH cephalic, FHT 140s',
+  peChestLungs:'Clear breath sounds, no retractions', peGU:'Cervix 5cm dilated, 80% effaced',
+  peCVS:'Normal rate, regular rhythm, no murmurs', peSkinExtremities:'No edema, no rashes',
+  peNeuroExam:'Grossly intact, oriented to time, place, person',
+  courseInWards:'Patient tolerated labor well. Delivered via NSD with no complications. Stable vital signs post-partum.',
+  labFindings:'CBC: Hgb 120 g/L, Hct 0.36, WBC 10.5, Platelet 250. Urinalysis: unremarkable.',
+
+  /* CF3 Page 2 – Part II: Maternity Care Package */
+  initialPrenatalDate:'2025-11-15', vitalSignsNormal:true, pregnancyLowRisk:true,
+  obTerm:'1', obPreterm:'0', obAbortion:'0', obLiving:'1',
+  riskMultiplePregnancy:false, riskOvarianCyst:false, riskMyomaUteri:false,
+  riskPlacentaPrevia:false, riskMiscarriages:false, riskStillbirth:false,
+  riskPreeclampsia:false, riskEclampsia:false, riskPrematureContraction:false,
+  riskHypertension:false, riskHeartDisease:false, riskDiabetes:false,
+  riskThyroidDisorder:false, riskObesity:false, riskAsthma:false,
+  riskEpilepsy:false, riskRenalDisease:false, riskBleedingDisorders:false,
+  riskPrevCesarian:false, riskUterineMyomectomy:false,
+  mcpOrientation:'yes',
+  pncDate2:'11/15/25', pncAog2:'8', pncWeight2:'58', pncCr2:'80', pncRr2:'18', pncBp2:'110/70', pncTemp2:'36.5',
+  pncDate3:'12/13/25', pncAog3:'12', pncWeight3:'60', pncCr3:'82', pncRr3:'18', pncBp3:'112/72', pncTemp3:'36.6',
+  pncDate4:'', pncAog4:'', pncWeight4:'', pncCr4:'', pncRr4:'', pncBp4:'', pncTemp4:'',
+  pncDate5:'', pncAog5:'', pncWeight5:'', pncCr5:'', pncRr5:'', pncBp5:'', pncTemp5:'',
+  pncDate6:'', pncAog6:'', pncWeight6:'', pncCr6:'', pncRr6:'', pncBp6:'', pncTemp6:'',
+  pncDate7:'', pncAog7:'', pncWeight7:'', pncCr7:'', pncRr7:'', pncBp7:'', pncTemp7:'',
+  pncDate8:'', pncAog8:'', pncWeight8:'', pncCr8:'', pncRr8:'', pncBp8:'', pncTemp8:'',
+  pncDate9:'', pncAog9:'', pncWeight9:'', pncCr9:'', pncRr9:'', pncBp9:'', pncTemp9:'',
+  pncDate10:'', pncAog10:'', pncWeight10:'', pncCr10:'', pncRr10:'', pncBp10:'', pncTemp10:'',
+  pncDate11:'', pncAog11:'', pncWeight11:'', pncCr11:'', pncRr11:'', pncBp11:'', pncTemp11:'',
+  pncDate12:'', pncAog12:'', pncWeight12:'', pncCr12:'', pncRr12:'', pncBp12:'', pncTemp12:'',
+  obstetricIndex:'G2P2', pregnancyUterineAOG:'Term, 39 weeks AOG', presentation:'Cephalic',
+  postpartumFollowupDate:'2026-06-20',
+  ppPerinealDone:true, ppPerinealRemarks:'Intact, no laceration',
+  ppComplicationsDone:true, ppComplicationsRemarks:'None noted',
+  ppBreastfeedingDone:true, ppBreastfeedingRemarks:'Latching well',
+  ppFamilyPlanningDone:true, ppFamilyPlanningRemarks:'Discussed options',
+  ppFPServiceDone:false, ppFPServiceRemarks:'',
+  ppReferredVSSDone:false, ppReferredVSSRemarks:'',
+  ppScheduleNextDone:true, ppScheduleNextRemarks:'1 week post-partum check',
+  attendingPhysicianName:'Dr. Ana Reyes, M.D.', dateSigned:'2026-06-13',
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -118,9 +207,52 @@ function getComputedValue(key) {
       return formatTime12h(d.timeDischarge);
     case 'deliveryTimeStr':
       return formatTime12h(d.deliveryTime);
+    /* CF3 Date Admitted/Discharged split into per-box Month/Day/Year
+       to match the PDF's three separate ruled boxes */
+    case 'dateAdmittedMM':   return d.dateAdmitted ? d.dateAdmitted.split('-')[1] : '';
+    case 'dateAdmittedDD':   return d.dateAdmitted ? d.dateAdmitted.split('-')[2] : '';
+    case 'dateAdmittedYYYY': return d.dateAdmitted ? d.dateAdmitted.split('-')[0] : '';
+    case 'dateDischargeMM':   return d.dateDischarge ? d.dateDischarge.split('-')[1] : '';
+    case 'dateDischargeDD':   return d.dateDischarge ? d.dateDischarge.split('-')[2] : '';
+    case 'dateDischargeYYYY': return d.dateDischarge ? d.dateDischarge.split('-')[0] : '';
+    /* CF3 Time Admitted/Discharged: the PDF has two ruled hh:mm boxes per
+       row, one before the printed "AM" label and one before "PM" — the
+       box position itself indicates the period, so the value goes in
+       whichever box matches (the other stays blank). */
+    case 'timeAdmittedAM':   return isPMTime(d.timeAdmitted) === false ? bareTime(d.timeAdmitted) : '';
+    case 'timeAdmittedPM':   return isPMTime(d.timeAdmitted) === true  ? bareTime(d.timeAdmitted) : '';
+    case 'timeDischargeAM':  return isPMTime(d.timeDischarge) === false ? bareTime(d.timeDischarge) : '';
+    case 'timeDischargePM':  return isPMTime(d.timeDischarge) === true  ? bareTime(d.timeDischarge) : '';
+    /* CF3 Disposition on Discharge: a checkmark in whichever printed
+       checkbox matches the selected value, instead of writing the word */
+    case 'dispositionImproved':   return d.disposition === 'Improved'    ? '✓' : '';
+    case 'dispositionTransferred':return d.disposition === 'Transferred' ? '✓' : '';
+    case 'dispositionHAMA':       return d.disposition === 'HAMA'        ? '✓' : '';
+    case 'dispositionAbsconded':  return d.disposition === 'Absconded'   ? '✓' : '';
+    case 'dispositionExpired':    return d.disposition === 'Expired'     ? '✓' : '';
+    /* CF3 HCI Accreditation No. (PAN): one character per ruled digit box */
+    case 'hciPANc1': return (d.hciPAN || '').charAt(0);
+    case 'hciPANc2': return (d.hciPAN || '').charAt(1);
+    case 'hciPANc3': return (d.hciPAN || '').charAt(2);
+    case 'hciPANc4': return (d.hciPAN || '').charAt(3);
+    case 'hciPANc5': return (d.hciPAN || '').charAt(4);
+    case 'hciPANc6': return (d.hciPAN || '').charAt(5);
+    case 'hciPANc7': return (d.hciPAN || '').charAt(6);
+    case 'hciPANc8': return (d.hciPAN || '').charAt(7);
+    case 'hciPANc9': return (d.hciPAN || '').charAt(8);
     default:
       return d[key] || '';
   }
+}
+
+function isPMTime(hhmm) {
+  if (!hhmm) return null;
+  const h = parseInt(hhmm.split(':')[0], 10);
+  return isNaN(h) ? null : h >= 12;
+}
+
+function bareTime(hhmm) {
+  return formatTime12h(hhmm).replace(/\s*(AM|PM)$/, '');
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -317,6 +449,8 @@ function syncAllAutofillElements() {
       if (sibling === document.activeElement) return; // don't clobber the field being typed in
       if (sibling.type === 'radio') {
         sibling.checked = sibling.value === val;
+      } else if (sibling.type === 'checkbox') {
+        sibling.checked = !!state.data[key];
       } else if (sibling.tagName === 'SELECT' || sibling.tagName === 'TEXTAREA' || sibling.tagName === 'INPUT') {
         if (sibling.value !== val) sibling.value = val;
       }
@@ -348,6 +482,7 @@ function bindInputListeners() {
     const key = el.dataset.autofill;
     const handler = () => {
       if (el.type === 'radio') { if (el.checked) state.data[key] = el.value; }
+      else if (el.type === 'checkbox') state.data[key] = el.checked;
       else state.data[key] = el.value.trim ? el.value.trim() : el.value;
       updateFormPreviews();
     };
@@ -478,6 +613,7 @@ function loadSampleData() {
     const key = el.dataset.autofill;
     if (!(key in SAMPLE_DATA)) return;
     if (el.type === 'radio') el.checked = el.value === SAMPLE_DATA[key];
+    else if (el.type === 'checkbox') el.checked = !!SAMPLE_DATA[key];
     else el.value = SAMPLE_DATA[key];
   });
   updateFormPreviews();
@@ -493,6 +629,7 @@ document.getElementById('clearFormBtn').addEventListener('click', () => {
   document.querySelectorAll('[data-autofill]').forEach(el => {
     const key = el.dataset.autofill;
     if (el.type === 'radio') el.checked = false;
+    else if (el.type === 'checkbox') el.checked = false;
     else if (AM_DEFAULTS[key]) el.value = AM_DEFAULTS[key];
     else el.value = '';
   });
