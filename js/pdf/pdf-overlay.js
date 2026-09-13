@@ -15,7 +15,7 @@ const pdfState = {
   csf:  { doc: null, page: 1, totalPages: 1, rendered: false },
   cf2:  { doc: null, page: 1, totalPages: 2, rendered: false },
   cf3:  { doc: null, page: 1, totalPages: 2, rendered: false },
-  pmrf: { doc: null, page: 1, totalPages: 1, rendered: false },
+  pmrf: { doc: null, page: 1, totalPages: 2, rendered: false },
 };
 
 /* ── Overlay field coordinate maps ──────────────────────────
@@ -135,18 +135,25 @@ function scaleOverlayFonts(formKey) {
   const h = parseFloat(overlay.style.height) || overlay.getBoundingClientRect().height || 800;
   overlay.querySelectorAll('.pdf-field').forEach(span => {
     const fsPct = parseFloat(span.dataset.fsPct) || (8 / 936);
-    span.style.fontSize = Math.max(6, Math.round(fsPct * h)) + 'px';
+    span.style.fontSize = Math.max(5, Math.round(fsPct * h)) + 'px';
   });
 }
 
 /* ── Resolve one overlay field's display value ───────────────────
-   Supports plain computed/key lookups plus 3 generic field shapes,
-   used across CF3 page 2 to avoid a getComputedValue case per field:
+   Supports plain computed/key lookups plus generic field shapes, used to
+   avoid a getComputedValue case per field:
      checkbox:true        → '✓' if state.data[f.key] is truthy, or
                              (with checkValue set) equals checkValue
      dateComponent:'MM'|'DD'|'YYYY' → part of an ISO date at state.data[f.key]
      timeComponent:'AM'|'PM'        → bare hh:mm at state.data[f.key],
                              shown only when that period applies
+     digit:N               → one character (0-indexed) out of state.data[f.key]
+                             (or f.digitKey, if the id differs from the key),
+                             digits only — non-digit separators are stripped.
+                             With digitOrder:'mmddyyyy', f.digitKey is treated
+                             as an ISO "YYYY-MM-DD" date and reordered to
+                             MM+DD+YYYY (matching printed mm/dd/yyyy digit boxes)
+                             before indexing.
 ─────────────────────────────────────────────────────────────── */
 function resolveOverlayFieldValue(f) {
   const data = window.state?.data || {};
@@ -164,6 +171,18 @@ function resolveOverlayFieldValue(f) {
     return parts[2] || '';
   }
 
+  if (f.digit !== undefined) {
+    const raw = data[f.digitKey || f.key] || '';
+    let digits;
+    if (f.digitOrder === 'mmddyyyy') {
+      const parts = raw.split('-'); // ISO: [YYYY, MM, DD]
+      digits = (parts[1] || '') + (parts[2] || '') + (parts[0] || '');
+    } else {
+      digits = raw.replace(/\D/g, '');
+    }
+    return digits.charAt(f.digit) || '';
+  }
+
   if (f.timeComponent) {
     const raw = data[f.key] || '';
     const h = parseInt(raw.split(':')[0], 10);
@@ -171,6 +190,16 @@ function resolveOverlayFieldValue(f) {
     const isPM = h >= 12;
     if ((f.timeComponent === 'PM') !== isPM) return '';
     return typeof window.bareTime === 'function' ? window.bareTime(raw) : raw;
+  }
+
+  // amPmCheck: a literal AM/PM checkbox (distinct from timeComponent, which
+  // shows the time value itself in whichever of two alternate boxes applies)
+  if (f.amPmCheck) {
+    const raw = data[f.key] || '';
+    const h = parseInt(raw.split(':')[0], 10);
+    if (isNaN(h)) return '';
+    const isPM = h >= 12;
+    return (f.amPmCheck === 'PM') === isPM ? '✓' : '';
   }
 
   const gcv = window.getComputedValue;

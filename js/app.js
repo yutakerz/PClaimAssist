@@ -89,6 +89,40 @@ const state = {
     ppScheduleNextDone:false, ppScheduleNextRemarks:'',
     /* Certification of Attending Physician/Midwife (section 19) */
     attendingPhysicianName:'', dateSigned:'',
+
+    /* PMRF – Purpose / PhilSys / TIN */
+    registrationPurpose:'', preferredKonsulta:'', philsysId:'', tin:'',
+    /* PMRF – Name table checkboxes (Member / Mother / Spouse) */
+    memberNoMiddleName:false, memberMononym:false,
+    motherNoMiddleName:false, motherMononym:false,
+    spouseNoMiddleName:false, spouseMononym:false,
+    /* PMRF – Dependent 1 extras (shares patientLastName/FirstName/etc with CSF/CF2/CF3) */
+    patientCitizenship:'', dep1NoMiddleName:false, dep1Mononym:false, dep1Disability:false,
+    /* PMRF – Dependents 2–4 */
+    dep2LastName:'', dep2FirstName:'', dep2Ext:'', dep2MiddleName:'',
+    dep2Relationship:'', dep2DOB:'', dep2Citizenship:'',
+    dep2NoMiddleName:false, dep2Mononym:false, dep2Disability:false,
+    dep3LastName:'', dep3FirstName:'', dep3Ext:'', dep3MiddleName:'',
+    dep3Relationship:'', dep3DOB:'', dep3Citizenship:'',
+    dep3NoMiddleName:false, dep3Mononym:false, dep3Disability:false,
+    dep4LastName:'', dep4FirstName:'', dep4Ext:'', dep4MiddleName:'',
+    dep4Relationship:'', dep4DOB:'', dep4Citizenship:'',
+    dep4NoMiddleName:false, dep4Mononym:false, dep4Disability:false,
+    /* PMRF – Mailing Address */
+    mailingSameAsAbove:false, businessPhone:'',
+    mailingAddrUnit:'', mailingAddrBuilding:'', mailingAddrLot:'', mailingAddrStreet:'',
+    mailingAddrSubdivision:'', mailingAddrBarangay:'', mailingAddrCity:'',
+    mailingAddrProvince:'', mailingAddrZip:'',
+    /* PMRF – Member Type extras */
+    pwdIdNo:'', praSrrvNo:'', acrICardNo:'', groupEnrollmentNo:'', proofOfIncome:'',
+    /* PMRF Page 2 – V. Updating/Amendment */
+    amendName:false, amendNameFrom:'', amendNameTo:'',
+    amendDOB:false, amendDOBFrom:'', amendDOBTo:'',
+    amendSex:false, amendSexFrom:'', amendSexTo:'',
+    amendCivilStatus:false, amendCivilStatusFrom:'', amendCivilStatusTo:'',
+    amendPersonalInfo:false, amendPersonalInfoFrom:'', amendPersonalInfoTo:'',
+    /* PMRF Page 2 – Member's Signature */
+    memberSignatureName:'', memberSignatureDate:'',
   }
 };
 
@@ -115,7 +149,7 @@ const SAMPLE_DATA = {
   hciPAN:'000001234', hciName:'Mapagpala Maternity Clinic',
   hciStreet:'456 Bonifacio Avenue', hciCity:'Quezon City', hciProvince:'Metro Manila',
   employerPEN:'', employerPhone:'', employerName:'',
-  civilStatus:'Married', placeOfBirth:'Quezon City, Metro Manila', citizenship:'Filipino',
+  civilStatus:'Married', placeOfBirth:'Quezon City, Metro Manila', citizenship:'FILIPINO',
   motherLastName:'SANTOS', motherFirstName:'LILIA', motherMiddleName:'GARCIA',
   spouseLastName:'DELA CRUZ', spouseFirstName:'PEDRO', spouseMiddleName:'REYES',
   memberType:'Employed Private', profession:'Teacher', monthlyIncome:'25,000',
@@ -165,6 +199,41 @@ const SAMPLE_DATA = {
   ppReferredVSSDone:false, ppReferredVSSRemarks:'',
   ppScheduleNextDone:true, ppScheduleNextRemarks:'1 week post-partum check',
   attendingPhysicianName:'Dr. Ana Reyes, M.D.', dateSigned:'2026-06-13',
+
+  /* PMRF – Purpose / PhilSys / TIN */
+  registrationPurpose:'Registration', preferredKonsulta:'Mapagpala Maternity Clinic',
+  philsysId:'1234-5678-9012', tin:'123-456-789-000',
+  /* PMRF – Name table checkboxes */
+  memberNoMiddleName:false, memberMononym:false,
+  motherNoMiddleName:false, motherMononym:false,
+  spouseNoMiddleName:false, spouseMononym:false,
+  /* PMRF – Dependent 1 extras */
+  patientCitizenship:'FILIPINO', dep1NoMiddleName:false, dep1Mononym:false, dep1Disability:false,
+  /* PMRF – Dependents 2–4 (left blank by default) */
+  dep2LastName:'', dep2FirstName:'', dep2Ext:'', dep2MiddleName:'',
+  dep2Relationship:'', dep2DOB:'', dep2Citizenship:'',
+  dep2NoMiddleName:false, dep2Mononym:false, dep2Disability:false,
+  dep3LastName:'', dep3FirstName:'', dep3Ext:'', dep3MiddleName:'',
+  dep3Relationship:'', dep3DOB:'', dep3Citizenship:'',
+  dep3NoMiddleName:false, dep3Mononym:false, dep3Disability:false,
+  dep4LastName:'', dep4FirstName:'', dep4Ext:'', dep4MiddleName:'',
+  dep4Relationship:'', dep4DOB:'', dep4Citizenship:'',
+  dep4NoMiddleName:false, dep4Mononym:false, dep4Disability:false,
+  /* PMRF – Mailing Address */
+  mailingSameAsAbove:true, businessPhone:'',
+  mailingAddrUnit:'', mailingAddrBuilding:'', mailingAddrLot:'', mailingAddrStreet:'',
+  mailingAddrSubdivision:'', mailingAddrBarangay:'', mailingAddrCity:'',
+  mailingAddrProvince:'', mailingAddrZip:'',
+  /* PMRF – Member Type extras */
+  pwdIdNo:'', praSrrvNo:'', acrICardNo:'', groupEnrollmentNo:'', proofOfIncome:'',
+  /* PMRF Page 2 – V. Updating/Amendment (left unchecked by default) */
+  amendName:false, amendNameFrom:'', amendNameTo:'',
+  amendDOB:false, amendDOBFrom:'', amendDOBTo:'',
+  amendSex:false, amendSexFrom:'', amendSexTo:'',
+  amendCivilStatus:false, amendCivilStatusFrom:'', amendCivilStatusTo:'',
+  amendPersonalInfo:false, amendPersonalInfoFrom:'', amendPersonalInfoTo:'',
+  /* PMRF Page 2 – Member's Signature */
+  memberSignatureName:'Pedro R. Dela Cruz', memberSignatureDate:'2026-06-01',
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -172,7 +241,8 @@ const SAMPLE_DATA = {
 ══════════════════════════════════════════════════════════ */
 const DATE_FIELDS = new Set([
   'memberDOB','patientDOB','dateAdmitted','dateDischarge',
-  'deliveryDate','expectedDD','lmp'
+  'deliveryDate','expectedDD','lmp',
+  'dep2DOB','dep3DOB','dep4DOB','memberSignatureDate'
 ]);
 
 function getComputedValue(key) {
@@ -240,6 +310,29 @@ function getComputedValue(key) {
     case 'hciPANc7': return (d.hciPAN || '').charAt(6);
     case 'hciPANc8': return (d.hciPAN || '').charAt(7);
     case 'hciPANc9': return (d.hciPAN || '').charAt(8);
+    /* PMRF Date of Birth: 8 individual digit boxes in mm-dd-yyyy order
+       (state stores the ISO "YYYY-MM-DD" value from the date input) */
+    case 'memberDOBd1': return (d.memberDOB || '').slice(5,7).charAt(0);
+    case 'memberDOBd2': return (d.memberDOB || '').slice(5,7).charAt(1);
+    case 'memberDOBd3': return (d.memberDOB || '').slice(8,10).charAt(0);
+    case 'memberDOBd4': return (d.memberDOB || '').slice(8,10).charAt(1);
+    case 'memberDOBd5': return (d.memberDOB || '').slice(0,4).charAt(0);
+    case 'memberDOBd6': return (d.memberDOB || '').slice(0,4).charAt(1);
+    case 'memberDOBd7': return (d.memberDOB || '').slice(0,4).charAt(2);
+    case 'memberDOBd8': return (d.memberDOB || '').slice(0,4).charAt(3);
+    /* PMRF PIN / PhilSys ID / TIN: one character per ruled digit box
+       (non-digit separators like "-" are stripped first) */
+    case 'memberPINc1': case 'memberPINc2': case 'memberPINc3': case 'memberPINc4':
+    case 'memberPINc5': case 'memberPINc6': case 'memberPINc7': case 'memberPINc8':
+    case 'memberPINc9': case 'memberPINc10': case 'memberPINc11': case 'memberPINc12':
+      return digitsOnly(d.memberPIN).charAt(Number(key.slice(10)) - 1);
+    case 'philsysIdc1': case 'philsysIdc2': case 'philsysIdc3': case 'philsysIdc4':
+    case 'philsysIdc5': case 'philsysIdc6': case 'philsysIdc7': case 'philsysIdc8':
+    case 'philsysIdc9': case 'philsysIdc10': case 'philsysIdc11': case 'philsysIdc12':
+      return digitsOnly(d.philsysId).charAt(Number(key.slice(10)) - 1);
+    case 'tinc1': case 'tinc2': case 'tinc3': case 'tinc4': case 'tinc5':
+    case 'tinc6': case 'tinc7': case 'tinc8': case 'tinc9':
+      return digitsOnly(d.tin).charAt(Number(key.slice(4)) - 1);
     default:
       return d[key] || '';
   }
@@ -253,6 +346,10 @@ function isPMTime(hhmm) {
 
 function bareTime(hhmm) {
   return formatTime12h(hhmm).replace(/\s*(AM|PM)$/, '');
+}
+
+function digitsOnly(str) {
+  return (str || '').replace(/\D/g, '');
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -607,7 +704,8 @@ function updateDashboardStats() {
 /* ══════════════════════════════════════════════════════════
    SAMPLE DATA
 ══════════════════════════════════════════════════════════ */
-function loadSampleData() {
+function loadSampleData(opts) {
+  const stayOnPage = !!(opts && opts.stayOnPage);
   Object.assign(state.data, SAMPLE_DATA);
   document.querySelectorAll('[data-autofill]').forEach(el => {
     const key = el.dataset.autofill;
@@ -619,7 +717,7 @@ function loadSampleData() {
   updateFormPreviews();
   showToast('Sample data loaded', 'All fields populated with fictional demo data.', 'success');
   logActivity('Sample data loaded for demonstration', 'success');
-  navigateTo('patient');
+  if (!stayOnPage) navigateTo('patient');
 }
 
 

@@ -35,13 +35,13 @@ window.PDF_OVERLAY_CF3 = [
 
   // Patient Name
   { id:'patientLastName', key:'patientLastName', page:1,
-    top:21.4, left:5, w:12, fs:8 },
+    top:21.88, left:5, w:12, fs:8 },
 
   { id:'patientFirstName', key:'patientFirstName', page:1,
-    top:21.4, left:18, w:11, fs:8 },
+    top:21.88, left:18, w:11, fs:8 },
 
   { id:'patientMiddleName', key:'patientMiddleName', page:1,
-    top:21.4, left:30.5, w:10, fs:8 },
+    top:21.88, left:30.5, w:10, fs:8 },
 
   // Chief Complaint
   { id:'chiefComplaint', key:'chiefComplaint', page:1,
@@ -88,40 +88,40 @@ window.PDF_OVERLAY_CF3 = [
 
   // Physical Examination – Vital Signs (row: Vital Signs / BP / CR / RR / Temperature / Abdomen)
   { id:'vitalBP', key:'vitalBP', page:1,
-    top:51.4, left:18.8, w:5.9, fs:8 },
+    top:50.6, left:18.8, w:5.9, fs:8 },
 
   { id:'vitalCR', key:'vitalCR', page:1,
-    top:51.4, left:27.0, w:6.9, fs:8 },
+    top:50.6, left:27.0, w:6.9, fs:8 },
 
   { id:'vitalRR', key:'vitalRR', page:1,
-    top:51.4, left:36.3, w:7.1, fs:8 },
+    top:50.6, left:36.3, w:7.1, fs:8 },
 
   { id:'vitalTemp', key:'vitalTemp', page:1,
-    top:51.4, left:50.8, w:10.5, fs:8 },
+    top:50.6, left:50.8, w:10.5, fs:8 },
 
   { id:'peAbdomen', key:'peAbdomen', page:1,
-    top:51.4, left:75.0, w:21.7, fs:8 },
+    top:50.6, left:75.0, w:21.7, fs:8 },
 
   // Physical Examination – HEENT / GU (IE)
   { id:'peHEENT', key:'peHEENT', page:1,
-    top:54.3, left:15.2, w:46.1, fs:8 },
+    top:53.46, left:15.2, w:46.1, fs:8 },
 
   { id:'peGU', key:'peGU', page:1,
-    top:54.3, left:75.0, w:21.7, fs:8 },
+    top:53.46, left:75.0, w:21.7, fs:8 },
 
   // Physical Examination – Chest/Lungs / Skin-Extremities
   { id:'peChestLungs', key:'peChestLungs', page:1,
-    top:57.1, left:15.2, w:46.1, fs:8 },
+    top:56.26, left:15.2, w:46.1, fs:8 },
 
   { id:'peSkinExtremities', key:'peSkinExtremities', page:1,
-    top:57.1, left:75.0, w:21.7, fs:8 },
+    top:56.26, left:75.0, w:21.7, fs:8 },
 
   // Physical Examination – CVS / Neuro Examination
   { id:'peCVS', key:'peCVS', page:1,
-    top:59.9, left:15.2, w:46.1, fs:8 },
+    top:59.06, left:15.2, w:46.1, fs:8 },
 
   { id:'peNeuroExam', key:'peNeuroExam', page:1,
-    top:59.9, left:75.0, w:21.7, fs:8 },
+    top:59.06, left:75.0, w:21.7, fs:8 },
 
   // Course in the Wards
   { id:'courseInWards', key:'courseInWards', page:1,
@@ -249,28 +249,30 @@ window.PDF_OVERLAY_CF3 = [
     top:32.62, left:75.37, w:5.77, fs:8, dateComponent:'YYYY' },
 
   // Follow-up Prenatal Consultation grid — Date of visit (mm/dd/yy)
+  // fs:5 (smaller than the other grid rows) — 8-char dates need the extra
+  // margin to avoid touching the cell edges at this column width
   { id:'pncDate2', key:'pncDate2', page:2,
-    top:38.44, left:24.53, w:5.07, fs:6 },
+    top:38.44, left:24.53, w:5.07, fs:5 },
   { id:'pncDate3', key:'pncDate3', page:2,
-    top:38.44, left:30.88, w:5.07, fs:6 },
+    top:38.44, left:30.88, w:5.07, fs:5 },
   { id:'pncDate4', key:'pncDate4', page:2,
-    top:38.44, left:37.24, w:5.07, fs:6 },
+    top:38.44, left:37.24, w:5.07, fs:5 },
   { id:'pncDate5', key:'pncDate5', page:2,
-    top:38.44, left:43.59, w:5.07, fs:6 },
+    top:38.44, left:43.59, w:5.07, fs:5 },
   { id:'pncDate6', key:'pncDate6', page:2,
-    top:38.44, left:49.95, w:5.07, fs:6 },
+    top:38.44, left:49.95, w:5.07, fs:5 },
   { id:'pncDate7', key:'pncDate7', page:2,
-    top:38.44, left:56.31, w:5.07, fs:6 },
+    top:38.44, left:56.31, w:5.07, fs:5 },
   { id:'pncDate8', key:'pncDate8', page:2,
-    top:38.44, left:62.66, w:5.07, fs:6 },
+    top:38.44, left:62.66, w:5.07, fs:5 },
   { id:'pncDate9', key:'pncDate9', page:2,
-    top:38.44, left:69.02, w:5.07, fs:6 },
+    top:38.44, left:69.02, w:5.07, fs:5 },
   { id:'pncDate10', key:'pncDate10', page:2,
-    top:38.44, left:75.38, w:5.07, fs:6 },
+    top:38.44, left:75.38, w:5.07, fs:5 },
   { id:'pncDate11', key:'pncDate11', page:2,
-    top:38.44, left:81.72, w:5.07, fs:6 },
+    top:38.44, left:81.72, w:5.07, fs:5 },
   { id:'pncDate12', key:'pncDate12', page:2,
-    top:38.44, left:88.07, w:5.07, fs:6 },
+    top:38.44, left:88.07, w:5.07, fs:5 },
 
   // Follow-up Prenatal Consultation grid — AOG in weeks
   { id:'pncAog2', key:'pncAog2', page:2,
@@ -424,19 +426,19 @@ window.PDF_OVERLAY_CF3 = [
   { id:'deliveryDateYYYY', key:'deliveryDate', page:2,
     top:52.23, left:41.49, w:5.75, fs:8, dateComponent:'YYYY' },
   { id:'deliveryTimeAM', key:'deliveryTime', page:2,
-    top:52.23, left:54.9, w:2.94, fs:7, timeComponent:'AM' },
+    top:52.23, left:54.9, w:2.94, fs:5, timeComponent:'AM' },
   { id:'deliveryTimePM', key:'deliveryTime', page:2,
-    top:52.23, left:60.54, w:2.94, fs:7, timeComponent:'PM' },
+    top:52.23, left:60.54, w:2.94, fs:5, timeComponent:'PM' },
 
   // 9. Maternal Outcome
   { id:'obstetricIndex', key:'obstetricIndex', page:2,
-    top:55.94, left:21.06, w:7.77, fs:7 },
+    top:55.59, left:21.06, w:7.77, fs:7 },
   { id:'pregnancyUterineAOG', key:'pregnancyUterineAOG', page:2,
-    top:55.94, left:39.41, w:17.66, fs:7 },
+    top:55.59, left:39.41, w:17.66, fs:7 },
   { id:'mannerOfDelivery2', key:'mannerOfDelivery', page:2,
-    top:55.94, left:58.47, w:16.96, fs:7 },
+    top:55.59, left:58.47, w:16.96, fs:5 },
   { id:'presentation', key:'presentation', page:2,
-    top:55.94, left:76.85, w:16.97, fs:7 },
+    top:55.59, left:76.85, w:16.97, fs:7 },
 
   // 10. Birth Outcome
   { id:'fetalOutcome2', key:'fetalOutcome', page:2,
@@ -482,9 +484,9 @@ window.PDF_OVERLAY_CF3 = [
 
   // Breastfeeding and Nutrition
   { id:'ppBreastfeedingDone', key:'ppBreastfeedingDone', page:2,
-    top:74.89, left:54.9, w:1.6, fs:9, checkbox:true },
+    top:74.3, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppBreastfeedingRemarks', key:'ppBreastfeedingRemarks', page:2,
-    top:74.89, left:57.8, w:36.0, fs:7 },
+    top:74.3, left:57.8, w:36.0, fs:7 },
 
   // Family Planning
   { id:'ppFamilyPlanningDone', key:'ppFamilyPlanningDone', page:2,
