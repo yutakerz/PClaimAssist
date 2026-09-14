@@ -117,12 +117,15 @@ function injectOverlaySpans(formKey) {
 
   (OVERLAY_MAP[formKey] || []).forEach(f => {
     const span = document.createElement('span');
-    span.className     = 'pdf-field';
+    span.className     = 'pdf-field' + (f.wrap ? ' pdf-field--wrap' : '');
     span.id            = 'pof-' + formKey + '-' + f.id;
     span.dataset.page  = f.page;
-    span.dataset.fsPct = (f.fs || 8) / refH; 
+    span.dataset.fsPct = (f.fs || 8) / refH;
+    // translateY in em (not %) so the anchor stays put as text wraps to
+    // more lines — a % offset is relative to the span's own (growing)
+    // height and would shift multi-line text too far up.
     span.style.cssText =
-      `top:${f.top}%;left:${f.left}%;width:${f.w}%;transform:translateY(-70%);`;
+      `top:${f.top}%;left:${f.left}%;width:${f.w}%;transform:translateY(-0.7em);`;
     overlay.appendChild(span);
   });
   scaleOverlayFonts(formKey);

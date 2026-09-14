@@ -277,14 +277,6 @@ function getComputedValue(key) {
       return formatTime12h(d.timeDischarge);
     case 'deliveryTimeStr':
       return formatTime12h(d.deliveryTime);
-    /* CF3 Date Admitted/Discharged split into per-box Month/Day/Year
-       to match the PDF's three separate ruled boxes */
-    case 'dateAdmittedMM':   return d.dateAdmitted ? d.dateAdmitted.split('-')[1] : '';
-    case 'dateAdmittedDD':   return d.dateAdmitted ? d.dateAdmitted.split('-')[2] : '';
-    case 'dateAdmittedYYYY': return d.dateAdmitted ? d.dateAdmitted.split('-')[0] : '';
-    case 'dateDischargeMM':   return d.dateDischarge ? d.dateDischarge.split('-')[1] : '';
-    case 'dateDischargeDD':   return d.dateDischarge ? d.dateDischarge.split('-')[2] : '';
-    case 'dateDischargeYYYY': return d.dateDischarge ? d.dateDischarge.split('-')[0] : '';
     /* CF3 Time Admitted/Discharged: the PDF has two ruled hh:mm boxes per
        row, one before the printed "AM" label and one before "PM" — the
        box position itself indicates the period, so the value goes in
@@ -633,6 +625,11 @@ function commitBoxGroup(group) {
     const mm = boxes[0].value, dd = boxes[1].value, yyyy = boxes[2].value;
     state.data[key] = (mm.length === 2 && dd.length === 2 && yyyy.length === 4)
       ? `${yyyy}-${mm}-${dd}` : '';
+  } else if (type === 'date8') {
+    // 8 single-digit boxes: MM MM DD DD YYYY YYYY YYYY YYYY
+    const d = boxes.map(b => b.value);
+    state.data[key] = d.every(c => c.length === 1)
+      ? `${d[4]}${d[5]}${d[6]}${d[7]}-${d[0]}${d[1]}-${d[2]}${d[3]}` : '';
   } else {
     state.data[key] = boxes.map(b => b.value).join('');
   }
@@ -651,8 +648,14 @@ function syncBoxGroupsFromState() {
       boxes[0].value = mm || '';
       boxes[1].value = dd || '';
       boxes[2].value = yyyy || '';
+    } else if (type === 'date8') {
+      const [yyyy, mm, dd] = val ? val.split('-') : ['', '', ''];
+      const chars = `${mm}${dd}${yyyy}`.split('');
+      boxes.forEach((b, i) => { b.value = chars[i] || ''; });
     } else {
-      const chars = val.split('');
+      // strip separators like "-" that plain-text sample/typed values may
+      // carry (e.g. "12-345678901-2") — boxes hold one digit each
+      const chars = digitsOnly(val).split('');
       boxes.forEach((b, i) => { b.value = chars[i] || ''; });
     }
   });

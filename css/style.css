@@ -676,14 +676,20 @@ body {
   flex: 1.6 1 0;
   font-size: .875rem;
 }
-.pca-box-group--pan {
+.pca-box-group--pan,
+.pca-box-group--digits {
   gap: .25rem;
 }
-.pca-box-group--pan .pca-box {
+.pca-box-group--pan .pca-box,
+.pca-box-group--digits .pca-box {
   flex: 1 1 0;
   aspect-ratio: 1 / 1;
   font-size: .9rem;
   padding: .5rem 0;
+}
+.pca-box-gap {
+  width: .5rem;
+  flex-shrink: 0;
 }
 
 .pca-radio .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
@@ -1328,6 +1334,7 @@ body {
   font-weight: 700;
   color: #1a3a6e;
   line-height: 1;
+  min-height: 1em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
@@ -1338,6 +1345,15 @@ body {
 .pdf-field--filled {
   color: #003399;
   text-shadow: 0 0 1px rgba(0,51,153,.15);
+}
+/* Fields with real vertical room in the printed box (chief complaint,
+   brief history, course in the wards, lab findings, etc.) wrap instead
+   of clipping — matches pdf-lib's own maxWidth wrapping on export. */
+.pdf-field--wrap {
+  white-space: normal;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  max-height: 8em;
 }
 
 /* ── RIGHT: Data entry panel ─────────────────────────────── */

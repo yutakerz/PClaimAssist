@@ -1870,7 +1870,20 @@
         <div class="row g-2">
           <div class="col-12">
             <label class="pca-label">PhilHealth ID Number (PIN)</label>
-            <input type="text" class="form-control pca-input" data-autofill="memberPIN" placeholder="12-345678901-2">
+            <div class="pca-box-group pca-box-group--digits" data-box-key="memberPIN" data-box-type="chars">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="0">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="2">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="3">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="4">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="5">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="6">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="7">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="8">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="9">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="10">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="11">
+            </div>
           </div>
           <div class="col-6">
             <label class="pca-label">Last Name</label>
@@ -1888,9 +1901,20 @@
             <label class="pca-label">Suffix</label>
             <input type="text" class="form-control pca-input" data-autofill="memberNameExt" placeholder="Jr.">
           </div>
-          <div class="col-4">
-            <label class="pca-label">Date of Birth</label>
-            <input type="date" class="form-control pca-input" data-autofill="memberDOB">
+          <div class="col-8">
+            <label class="pca-label">Date of Birth (mm-dd-yyyy)</label>
+            <div class="pca-box-group pca-box-group--digits" data-box-key="memberDOB" data-box-type="date8">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="MM1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="MM2">
+              <span class="pca-box-gap"></span>
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="DD1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="DD2">
+              <span class="pca-box-gap"></span>
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="YYYY1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="YYYY2">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="YYYY3">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="YYYY4">
+            </div>
           </div>
           <div class="col-6">
             <div class="form-check pca-checkbox"><input type="checkbox" class="form-check-input" data-autofill="memberNoMiddleName" id="pmrf-memberNoMiddleName"><label class="form-check-label" for="pmrf-memberNoMiddleName">No Middle Name</label></div>
@@ -1930,13 +1954,36 @@
             <label class="pca-label">Place of Birth</label>
             <input type="text" class="form-control pca-input" data-autofill="placeOfBirth" placeholder="Quezon City">
           </div>
-          <div class="col-6">
+          <div class="col-12">
             <label class="pca-label">PhilSys ID Number (Optional)</label>
-            <input type="text" class="form-control pca-input" data-autofill="philsysId" placeholder="1234-5678-9012">
+            <div class="pca-box-group pca-box-group--digits" data-box-key="philsysId" data-box-type="chars">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="0">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="2">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="3">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="4">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="5">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="6">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="7">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="8">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="9">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="10">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="11">
+            </div>
           </div>
-          <div class="col-6">
+          <div class="col-12">
             <label class="pca-label">TIN (Optional)</label>
-            <input type="text" class="form-control pca-input" data-autofill="tin" placeholder="123-456-789-000">
+            <div class="pca-box-group pca-box-group--digits" data-box-key="tin" data-box-type="chars">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="0">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="2">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="3">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="4">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="5">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="6">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="7">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="8">
+            </div>
           </div>
         </div>
 
