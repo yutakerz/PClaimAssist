@@ -7,31 +7,31 @@
 window.PDF_OVERLAY_CF3 = [
   // HCI Accreditation No. (PAN) – one character per ruled digit box
   { id:'hciPANc1', key:'hciPANc1', page:1,
-    top:17.3, left:47.2, w:2.5, fs:9, computed:'hciPANc1' },
+    top:17.3, left:46.3, w:2.5, fs:9, computed:'hciPANc1' },
 
   { id:'hciPANc2', key:'hciPANc2', page:1,
-    top:17.3, left:50.0, w:2.5, fs:9, computed:'hciPANc2' },
+    top:17.3, left:49.07, w:2.5, fs:9, computed:'hciPANc2' },
 
   { id:'hciPANc3', key:'hciPANc3', page:1,
-    top:17.3, left:52.7, w:2.5, fs:9, computed:'hciPANc3' },
+    top:17.3, left:51.84, w:2.5, fs:9, computed:'hciPANc3' },
 
   { id:'hciPANc4', key:'hciPANc4', page:1,
-    top:17.3, left:55.5, w:2.5, fs:9, computed:'hciPANc4' },
+    top:17.3, left:54.6, w:2.5, fs:9, computed:'hciPANc4' },
 
   { id:'hciPANc5', key:'hciPANc5', page:1,
-    top:17.3, left:58.3, w:2.5, fs:9, computed:'hciPANc5' },
+    top:17.3, left:57.37, w:2.5, fs:9, computed:'hciPANc5' },
 
   { id:'hciPANc6', key:'hciPANc6', page:1,
-    top:17.3, left:61.0, w:2.5, fs:9, computed:'hciPANc6' },
+    top:17.3, left:60.14, w:2.5, fs:9, computed:'hciPANc6' },
 
   { id:'hciPANc7', key:'hciPANc7', page:1,
-    top:17.3, left:63.8, w:2.5, fs:9, computed:'hciPANc7' },
+    top:17.3, left:62.9, w:2.5, fs:9, computed:'hciPANc7' },
 
   { id:'hciPANc8', key:'hciPANc8', page:1,
-    top:17.3, left:66.6, w:2.5, fs:9, computed:'hciPANc8' },
+    top:17.3, left:65.67, w:2.5, fs:9, computed:'hciPANc8' },
 
   { id:'hciPANc9', key:'hciPANc9', page:1,
-    top:17.3, left:69.3, w:2.5, fs:9, computed:'hciPANc9' },
+    top:17.3, left:68.43, w:2.5, fs:9, computed:'hciPANc9' },
 
   // Patient Name
   { id:'patientLastName', key:'patientLastName', page:1,
@@ -151,22 +151,22 @@ window.PDF_OVERLAY_CF3 = [
 
   // 1. Initial Prenatal Consultation (date, 3 boxes)
   { id:'initialPrenatalMM', key:'initialPrenatalDate', page:2,
-    top:8.88, left:31.58, w:2.94, fs:8, dateComponent:'MM' },
+    top:8.88, left:31.71, w:2.94, fs:8, dateComponent:'MM' },
   { id:'initialPrenatalDD', key:'initialPrenatalDate', page:2,
-    top:8.88, left:36.54, w:2.94, fs:8, dateComponent:'DD' },
+    top:8.88, left:36.66, w:2.94, fs:8, dateComponent:'DD' },
   { id:'initialPrenatalYYYY', key:'initialPrenatalDate', page:2,
-    top:8.88, left:41.49, w:5.75, fs:8, dateComponent:'YYYY' },
+    top:8.88, left:41.6, w:5.75, fs:8, dateComponent:'YYYY' },
 
   // 2. Clinical History and Physical Examination
   { id:'vitalSignsNormal', key:'vitalSignsNormal', page:2,
     top:12.8, left:35.83, w:1.6, fs:9, checkbox:true },
 
   { id:'lmpMM2', key:'lmp', page:2,
-    top:12.8, left:55.6, w:2.94, fs:8, dateComponent:'MM' },
+    top:12.8, left:55.72, w:2.94, fs:8, dateComponent:'MM' },
   { id:'lmpDD2', key:'lmp', page:2,
-    top:12.8, left:60.54, w:2.94, fs:8, dateComponent:'DD' },
+    top:12.8, left:60.66, w:2.94, fs:8, dateComponent:'DD' },
   { id:'lmpYYYY2', key:'lmp', page:2,
-    top:12.8, left:65.49, w:5.77, fs:8, dateComponent:'YYYY' },
+    top:12.8, left:65.6, w:5.77, fs:8, dateComponent:'YYYY' },
 
   { id:'ageOfMenarche2', key:'ageOfMenarche', page:2,
     top:12.65, left:81.99, w:6.45, fs:8 },
@@ -242,11 +242,11 @@ window.PDF_OVERLAY_CF3 = [
     top:32.62, left:39.36, w:1.6, fs:9, checkbox:true, checkValue:'no' },
 
   { id:'expectedDDMM', key:'expectedDD', page:2,
-    top:32.62, left:65.49, w:2.94, fs:8, dateComponent:'MM' },
+    top:32.62, left:65.6, w:2.94, fs:8, dateComponent:'MM' },
   { id:'expectedDDDD', key:'expectedDD', page:2,
-    top:32.62, left:70.42, w:2.94, fs:8, dateComponent:'DD' },
+    top:32.62, left:70.55, w:2.94, fs:8, dateComponent:'DD' },
   { id:'expectedDDYYYY', key:'expectedDD', page:2,
-    top:32.62, left:75.37, w:5.77, fs:8, dateComponent:'YYYY' },
+    top:32.62, left:75.48, w:5.77, fs:8, dateComponent:'YYYY' },
 
   // Follow-up Prenatal Consultation grid — Date of visit (mm/dd/yy)
   // fs:5 (smaller than the other grid rows) — 8-char dates need the extra
@@ -420,15 +420,15 @@ window.PDF_OVERLAY_CF3 = [
 
   // 8. Date and Time of Delivery
   { id:'deliveryDateMM', key:'deliveryDate', page:2,
-    top:52.23, left:31.58, w:2.94, fs:8, dateComponent:'MM' },
+    top:52.23, left:31.71, w:2.94, fs:8, dateComponent:'MM' },
   { id:'deliveryDateDD', key:'deliveryDate', page:2,
-    top:52.23, left:36.54, w:2.94, fs:8, dateComponent:'DD' },
+    top:52.23, left:36.66, w:2.94, fs:8, dateComponent:'DD' },
   { id:'deliveryDateYYYY', key:'deliveryDate', page:2,
-    top:52.23, left:41.49, w:5.75, fs:8, dateComponent:'YYYY' },
+    top:52.23, left:41.6, w:5.75, fs:8, dateComponent:'YYYY' },
   { id:'deliveryTimeAM', key:'deliveryTime', page:2,
-    top:52.23, left:54.9, w:2.94, fs:5, timeComponent:'AM' },
+    top:52.23, left:55.01, w:2.94, fs:5, timeComponent:'AM' },
   { id:'deliveryTimePM', key:'deliveryTime', page:2,
-    top:52.23, left:60.54, w:2.94, fs:5, timeComponent:'PM' },
+    top:52.23, left:60.66, w:2.94, fs:5, timeComponent:'PM' },
 
   // 9. Maternal Outcome
   { id:'obstetricIndex', key:'obstetricIndex', page:2,
@@ -452,73 +452,73 @@ window.PDF_OVERLAY_CF3 = [
 
   // 11. Scheduled Postpartum follow-up consultation
   { id:'postpartumFollowupMM', key:'postpartumFollowupDate', page:2,
-    top:61.75, left:54.9, w:2.94, fs:8, dateComponent:'MM' },
+    top:61.75, left:55.01, w:2.94, fs:8, dateComponent:'MM' },
   { id:'postpartumFollowupDD', key:'postpartumFollowupDate', page:2,
-    top:61.75, left:59.84, w:2.94, fs:8, dateComponent:'DD' },
+    top:61.75, left:59.95, w:2.94, fs:8, dateComponent:'DD' },
   { id:'postpartumFollowupYYYY', key:'postpartumFollowupDate', page:2,
-    top:61.75, left:64.77, w:5.77, fs:8, dateComponent:'YYYY' },
+    top:61.75, left:64.89, w:5.77, fs:8, dateComponent:'YYYY' },
 
   // 12. Date and Time of Discharge (same underlying data as CF3 page 1)
   { id:'dischargeMM2', key:'dateDischargeMM', page:2,
-    top:64.0, left:31.58, w:2.94, fs:8, computed:'dateDischargeMM' },
+    top:64.0, left:31.71, w:2.94, fs:8, computed:'dateDischargeMM' },
   { id:'dischargeDD2', key:'dateDischargeDD', page:2,
-    top:64.0, left:36.54, w:2.94, fs:8, computed:'dateDischargeDD' },
+    top:64.0, left:36.66, w:2.94, fs:8, computed:'dateDischargeDD' },
   { id:'dischargeYYYY2', key:'dateDischargeYYYY', page:2,
-    top:64.0, left:41.49, w:5.75, fs:8, computed:'dateDischargeYYYY' },
+    top:64.0, left:41.6, w:5.75, fs:8, computed:'dateDischargeYYYY' },
   { id:'dischargeTimeAM2', key:'timeDischargeAM', page:2,
-    top:64.0, left:55.6, w:2.94, fs:7, computed:'timeDischargeAM' },
+    top:64.0, left:55.72, w:2.94, fs:5, computed:'timeDischargeAM' },
   { id:'dischargeTimePM2', key:'timeDischargePM', page:2,
-    top:64.0, left:61.24, w:2.94, fs:7, computed:'timeDischargePM' },
+    top:64.0, left:61.37, w:2.94, fs:5, computed:'timeDischargePM' },
 
   // Perineal wound care
   { id:'ppPerinealDone', key:'ppPerinealDone', page:2,
     top:70.26, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppPerinealRemarks', key:'ppPerinealRemarks', page:2,
-    top:70.26, left:57.8, w:36.0, fs:7 },
+    top:69.86, left:57.8, w:36.0, fs:7 },
 
   // Signs of Maternal Postpartum Complications
   { id:'ppComplicationsDone', key:'ppComplicationsDone', page:2,
     top:71.61, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppComplicationsRemarks', key:'ppComplicationsRemarks', page:2,
-    top:71.61, left:57.8, w:36.0, fs:7 },
+    top:71.21, left:57.8, w:36.0, fs:7 },
 
   // Breastfeeding and Nutrition
   { id:'ppBreastfeedingDone', key:'ppBreastfeedingDone', page:2,
     top:74.3, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppBreastfeedingRemarks', key:'ppBreastfeedingRemarks', page:2,
-    top:74.3, left:57.8, w:36.0, fs:7 },
+    top:73.9, left:57.8, w:36.0, fs:7 },
 
   // Family Planning
   { id:'ppFamilyPlanningDone', key:'ppFamilyPlanningDone', page:2,
     top:75.65, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppFamilyPlanningRemarks', key:'ppFamilyPlanningRemarks', page:2,
-    top:75.65, left:57.8, w:36.0, fs:7 },
+    top:75.25, left:57.8, w:36.0, fs:7 },
 
   // Provided family planning service to patient
   { id:'ppFPServiceDone', key:'ppFPServiceDone', page:2,
     top:76.98, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppFPServiceRemarks', key:'ppFPServiceRemarks', page:2,
-    top:76.98, left:57.8, w:36.0, fs:7 },
+    top:76.58, left:57.8, w:36.0, fs:7 },
 
   // Referred to partner physician for Voluntary Surgical Sterilization
   { id:'ppReferredVSSDone', key:'ppReferredVSSDone', page:2,
     top:78.33, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppReferredVSSRemarks', key:'ppReferredVSSRemarks', page:2,
-    top:78.33, left:57.8, w:36.0, fs:7 },
+    top:77.93, left:57.8, w:36.0, fs:7 },
 
   // Schedule the next postpartum follow-up
   { id:'ppScheduleNextDone', key:'ppScheduleNextDone', page:2,
     top:79.67, left:54.9, w:1.6, fs:9, checkbox:true },
   { id:'ppScheduleNextRemarks', key:'ppScheduleNextRemarks', page:2,
-    top:79.67, left:57.8, w:36.0, fs:7 },
+    top:79.27, left:57.8, w:36.0, fs:7 },
 
   // 19. Certification of Attending Physician/Midwife
   { id:'attendingPhysicianName', key:'attendingPhysicianName', page:2,
     top:86.79, left:9.05, w:36.03, fs:8 },
   { id:'dateSignedMM', key:'dateSigned', page:2,
-    top:87.32, left:58.42, w:2.94, fs:8, dateComponent:'MM' },
+    top:87.32, left:58.54, w:2.94, fs:8, dateComponent:'MM' },
   { id:'dateSignedDD', key:'dateSigned', page:2,
-    top:87.32, left:63.33, w:2.94, fs:8, dateComponent:'DD' },
+    top:87.32, left:63.48, w:2.94, fs:8, dateComponent:'DD' },
   { id:'dateSignedYYYY', key:'dateSigned', page:2,
-    top:87.32, left:68.3, w:5.77, fs:8, dateComponent:'YYYY' },
+    top:87.32, left:68.42, w:5.77, fs:8, dateComponent:'YYYY' },
 ];

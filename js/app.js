@@ -527,6 +527,8 @@ function updateFormPreviews() {
   });
   // Sync all duplicate data-autofill elements (e.g. split-screen right panels)
   syncAllAutofillElements();
+  // Sync segmented box-group inputs (dates, PAN) from state
+  syncBoxGroupsFromState();
   // Update PDF canvas overlays
   if (typeof updateAllOverlays === 'function') updateAllOverlays();
   updateValidation();
@@ -585,6 +587,74 @@ function bindInputListeners() {
     };
     el.addEventListener('input', handler);
     el.addEventListener('change', handler);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   SEGMENTED "BOX" INPUTS
+   Some CF3 fields (dates, HCI Accreditation No./PAN) print as
+   individual ruled boxes on the PDF. These groups render as
+   separate per-character/segment boxes in the data-entry panel
+   to match, while still feeding the same state.data[key] the
+   rest of the app (overlays, validation, previews) expects.
+══════════════════════════════════════════════════════════ */
+function bindBoxGroupListeners() {
+  document.querySelectorAll('.pca-box-group').forEach(group => {
+    const boxes = Array.from(group.querySelectorAll('.pca-box'));
+    boxes.forEach((box, i) => {
+      box.addEventListener('input', () => {
+        box.value = box.value.replace(/\D/g, '').slice(0, box.maxLength);
+        if (box.value.length >= box.maxLength && boxes[i + 1]) boxes[i + 1].focus();
+        commitBoxGroup(group);
+      });
+      box.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !box.value && boxes[i - 1]) boxes[i - 1].focus();
+      });
+      box.addEventListener('paste', e => {
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        if (!text) return;
+        e.preventDefault();
+        let idx = i;
+        text.replace(/\D/g, '').split('').forEach(ch => {
+          if (boxes[idx]) { boxes[idx].value = ch; idx++; }
+        });
+        (boxes[idx] || box).focus();
+        commitBoxGroup(group);
+      });
+    });
+  });
+}
+
+function commitBoxGroup(group) {
+  const key   = group.dataset.boxKey;
+  const type  = group.dataset.boxType;
+  const boxes = Array.from(group.querySelectorAll('.pca-box'));
+  if (type === 'date') {
+    const mm = boxes[0].value, dd = boxes[1].value, yyyy = boxes[2].value;
+    state.data[key] = (mm.length === 2 && dd.length === 2 && yyyy.length === 4)
+      ? `${yyyy}-${mm}-${dd}` : '';
+  } else {
+    state.data[key] = boxes.map(b => b.value).join('');
+  }
+  updateFormPreviews();
+}
+
+function syncBoxGroupsFromState() {
+  document.querySelectorAll('.pca-box-group').forEach(group => {
+    if (group.contains(document.activeElement)) return; // don't clobber active typing
+    const key   = group.dataset.boxKey;
+    const type  = group.dataset.boxType;
+    const boxes = Array.from(group.querySelectorAll('.pca-box'));
+    const val   = state.data[key] || '';
+    if (type === 'date') {
+      const [yyyy, mm, dd] = val ? val.split('-') : ['', '', ''];
+      boxes[0].value = mm || '';
+      boxes[1].value = dd || '';
+      boxes[2].value = yyyy || '';
+    } else {
+      const chars = val.split('');
+      boxes.forEach((b, i) => { b.value = chars[i] || ''; });
+    }
   });
 }
 
@@ -910,6 +980,7 @@ function escHtml(str) {
    INIT
 ══════════════════════════════════════════════════════════ */
 bindInputListeners();
+bindBoxGroupListeners();
 updateFormPreviews();
 navigateTo('dashboard');
 

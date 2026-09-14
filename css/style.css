@@ -637,6 +637,55 @@ body {
   margin-top: .25rem;
 }
 
+/* ── Segmented "box" inputs — mirror the PDF's ruled boxes
+   (date Month/Day/Year cells, PAN digit cells) ───────────── */
+.pca-box-group {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  flex-wrap: nowrap;
+}
+.pca-box {
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: #FAFAFA;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  text-align: center;
+  padding: .55rem 0;
+  transition: var(--transition);
+  min-width: 0;
+}
+.pca-box:focus {
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  outline: none;
+}
+.pca-box-sep {
+  color: var(--text-muted);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.pca-box-group--date .pca-box[data-part="MM"],
+.pca-box-group--date .pca-box[data-part="DD"] {
+  flex: 1 1 0;
+  font-size: .875rem;
+}
+.pca-box-group--date .pca-box[data-part="YYYY"] {
+  flex: 1.6 1 0;
+  font-size: .875rem;
+}
+.pca-box-group--pan {
+  gap: .25rem;
+}
+.pca-box-group--pan .pca-box {
+  flex: 1 1 0;
+  aspect-ratio: 1 / 1;
+  font-size: .9rem;
+  padding: .5rem 0;
+}
+
 .pca-radio .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
 
 /* ── CF3 Page 2: sub-headings, checkbox groups, prenatal grid, postpartum list ── */

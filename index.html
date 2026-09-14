@@ -1374,7 +1374,17 @@
         <div class="row g-2">
           <div class="col-12">
             <label class="pca-label">HCI Accreditation No. (PAN)</label>
-            <input type="text" class="form-control pca-input" data-autofill="hciPAN" placeholder="000001234">
+            <div class="pca-box-group pca-box-group--pan" data-box-key="hciPAN" data-box-type="chars">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="0">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="1">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="2">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="3">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="4">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="5">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="6">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="7">
+              <input type="text" inputmode="numeric" maxlength="1" class="pca-box" data-part="8">
+            </div>
           </div>
           <div class="col-4">
             <label class="pca-label">Patient Last Name</label>
@@ -1394,7 +1404,13 @@
           </div>
           <div class="col-6">
             <label class="pca-label">Date Admitted</label>
-            <input type="date" class="form-control pca-input" data-autofill="dateAdmitted">
+            <div class="pca-box-group pca-box-group--date" data-box-key="dateAdmitted" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-6">
             <label class="pca-label">Time Admitted</label>
@@ -1402,7 +1418,13 @@
           </div>
           <div class="col-6">
             <label class="pca-label">Date Discharged</label>
-            <input type="date" class="form-control pca-input" data-autofill="dateDischarge">
+            <div class="pca-box-group pca-box-group--date" data-box-key="dateDischarge" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-6">
             <label class="pca-label">Time Discharged</label>
@@ -1484,7 +1506,13 @@
         <div class="row g-2">
           <div class="col-6">
             <label class="pca-label">Initial Prenatal Consultation Date</label>
-            <input type="date" class="form-control pca-input" data-autofill="initialPrenatalDate">
+            <div class="pca-box-group pca-box-group--date" data-box-key="initialPrenatalDate" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-6">
             <div class="form-check pca-checkbox mt-4">
@@ -1494,7 +1522,13 @@
           </div>
           <div class="col-6">
             <label class="pca-label">Last Menstrual Period (LMP)</label>
-            <input type="date" class="form-control pca-input" data-autofill="lmp">
+            <div class="pca-box-group pca-box-group--date" data-box-key="lmp" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-3">
             <label class="pca-label">Age of Menarche</label>
@@ -1576,7 +1610,13 @@
           </div>
           <div class="col-6">
             <label class="pca-label">Expected Date of Delivery</label>
-            <input type="date" class="form-control pca-input" data-autofill="expectedDD">
+            <div class="pca-box-group pca-box-group--date" data-box-key="expectedDD" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
         </div>
 
@@ -1600,7 +1640,13 @@
         <div class="row g-2">
           <div class="col-6">
             <label class="pca-label">Date of Delivery</label>
-            <input type="date" class="form-control pca-input" data-autofill="deliveryDate">
+            <div class="pca-box-group pca-box-group--date" data-box-key="deliveryDate" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-6">
             <label class="pca-label">Time of Delivery</label>
@@ -1663,11 +1709,23 @@
         <div class="row g-2">
           <div class="col-6">
             <label class="pca-label">Scheduled Postpartum Follow-up (1 week after delivery)</label>
-            <input type="date" class="form-control pca-input" data-autofill="postpartumFollowupDate">
+            <div class="pca-box-group pca-box-group--date" data-box-key="postpartumFollowupDate" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
-          <div class="col-3">
+          <div class="col-6">
             <label class="pca-label">Date Discharged</label>
-            <input type="date" class="form-control pca-input" data-autofill="dateDischarge">
+            <div class="pca-box-group pca-box-group--date" data-box-key="dateDischarge" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
           <div class="col-3">
             <label class="pca-label">Time Discharged</label>
@@ -1713,9 +1771,15 @@
             <label class="pca-label">Signature Over Printed Name of Attending Physician/Midwife</label>
             <input type="text" class="form-control pca-input" data-autofill="attendingPhysicianName" placeholder="Dr. Ana Reyes, M.D.">
           </div>
-          <div class="col-4">
+          <div class="col-6">
             <label class="pca-label">Date Signed</label>
-            <input type="date" class="form-control pca-input" data-autofill="dateSigned">
+            <div class="pca-box-group pca-box-group--date" data-box-key="dateSigned" data-box-type="date">
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="MM" placeholder="MM">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="2" class="pca-box" data-part="DD" placeholder="DD">
+              <span class="pca-box-sep">-</span>
+              <input type="text" inputmode="numeric" maxlength="4" class="pca-box" data-part="YYYY" placeholder="YYYY">
+            </div>
           </div>
         </div>
 
