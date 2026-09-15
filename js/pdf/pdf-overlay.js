@@ -15,7 +15,7 @@ const pdfState = {
   csf:  { doc: null, page: 1, totalPages: 1, rendered: false },
   cf2:  { doc: null, page: 1, totalPages: 2, rendered: false },
   cf3:  { doc: null, page: 1, totalPages: 2, rendered: false },
-  pmrf: { doc: null, page: 1, totalPages: 1, rendered: false },
+  pmrf: { doc: null, page: 1, totalPages: 2, rendered: false },
 };
 
 /* ── Overlay field coordinate maps ──────────────────────────
@@ -128,54 +128,16 @@ function injectOverlaySpans(formKey) {
   const refH = PAGE_H[formKey] || 936;
 
   (OVERLAY_MAP[formKey] || []).forEach(f => {
-    if (f.checkOptions) {
-      // Checkbox field: one checkmark span per printed box, shown only
-      // over the box matching the currently selected value.
-      const wrap = document.createElement('span');
-      wrap.className    = 'pdf-field-boxed';
-      wrap.id           = 'pof-' + formKey + '-' + f.id;
-      wrap.dataset.page = f.page;
-
-      f.checkOptions.forEach(opt => {
-        const mark = document.createElement('span');
-        mark.className     = 'pdf-field-check';
-        mark.dataset.value = opt.value;
-        mark.dataset.fsPct = (f.fs || 9) / refH;
-        mark.style.cssText = `top:${opt.top}%;left:${opt.left}%;transform:translateY(-70%);`;
-        mark.textContent   = '✔';
-        wrap.appendChild(mark);
-      });
-      overlay.appendChild(wrap);
-      return;
-    }
-
-    if (f.boxLefts) {
-      // Boxed field: one absolutely-positioned digit span per printed box,
-      // so each character lands centered inside its own box on the form.
-      const wrap = document.createElement('span');
-      wrap.className    = 'pdf-field-boxed';
-      wrap.id           = 'pof-' + formKey + '-' + f.id;
-      wrap.dataset.page = f.page;
-
-      f.boxLefts.forEach((boxLeft, i) => {
-        const digit = document.createElement('span');
-        digit.className     = 'pdf-field-digit';
-        digit.dataset.fsPct = (f.fs || 8) / refH;
-        digit.style.cssText = `top:${f.top}%;left:${boxLeft}%;transform:translateY(-70%);`;
-        digit.dataset.index = i;
-        wrap.appendChild(digit);
-      });
-      overlay.appendChild(wrap);
-      return;
-    }
-
     const span = document.createElement('span');
-    span.className     = 'pdf-field';
+    span.className     = 'pdf-field' + (f.wrap ? ' pdf-field--wrap' : '') + (f.center ? ' pdf-field--center' : '');
     span.id            = 'pof-' + formKey + '-' + f.id;
     span.dataset.page  = f.page;
     span.dataset.fsPct = (f.fs || 8) / refH;
+    // translateY in em (not %) so the anchor stays put as text wraps to
+    // more lines — a % offset is relative to the span's own (growing)
+    // height and would shift multi-line text too far up.
     span.style.cssText =
-      `top:${f.top}%;left:${f.left}%;width:${f.w}%;transform:translateY(-70%);`;
+      `top:${f.top}%;left:${f.left}%;width:${f.w}%;transform:translateY(-0.7em);`;
     overlay.appendChild(span);
   });
   scaleOverlayFonts(formKey);
@@ -186,10 +148,78 @@ function scaleOverlayFonts(formKey) {
   const overlay = document.getElementById('overlay-' + formKey);
   if (!overlay) return;
   const h = parseFloat(overlay.style.height) || overlay.getBoundingClientRect().height || 800;
-  overlay.querySelectorAll('.pdf-field, .pdf-field-digit, .pdf-field-check').forEach(span => {
+  overlay.querySelectorAll('.pdf-field').forEach(span => {
     const fsPct = parseFloat(span.dataset.fsPct) || (8 / 936);
-    span.style.fontSize = Math.max(6, Math.round(fsPct * h)) + 'px';
+    span.style.fontSize = Math.max(5, Math.round(fsPct * h)) + 'px';
   });
+}
+
+/* ── Resolve one overlay field's display value ───────────────────
+   Supports plain computed/key lookups plus generic field shapes, used to
+   avoid a getComputedValue case per field:
+     checkbox:true        → '✓' if state.data[f.key] is truthy, or
+                             (with checkValue set) equals checkValue
+     dateComponent:'MM'|'DD'|'YYYY' → part of an ISO date at state.data[f.key]
+     timeComponent:'AM'|'PM'        → bare hh:mm at state.data[f.key],
+                             shown only when that period applies
+     digit:N               → one character (0-indexed) out of state.data[f.key]
+                             (or f.digitKey, if the id differs from the key),
+                             digits only — non-digit separators are stripped.
+                             With digitOrder:'mmddyyyy', f.digitKey is treated
+                             as an ISO "YYYY-MM-DD" date and reordered to
+                             MM+DD+YYYY (matching printed mm/dd/yyyy digit boxes)
+                             before indexing.
+─────────────────────────────────────────────────────────────── */
+function resolveOverlayFieldValue(f) {
+  const data = window.state?.data || {};
+
+  if (f.checkbox) {
+    const raw = data[f.key];
+    const match = f.checkValue !== undefined ? raw === f.checkValue : !!raw;
+    return match ? '✓' : '';
+  }
+
+  if (f.dateComponent) {
+    const parts = (data[f.key] || '').split('-'); // ISO: [YYYY, MM, DD]
+    if (f.dateComponent === 'YYYY') return parts[0] || '';
+    if (f.dateComponent === 'MM')   return parts[1] || '';
+    return parts[2] || '';
+  }
+
+  if (f.digit !== undefined) {
+    const raw = data[f.digitKey || f.key] || '';
+    let digits;
+    if (f.digitOrder === 'mmddyyyy') {
+      const parts = raw.split('-'); // ISO: [YYYY, MM, DD]
+      digits = (parts[1] || '') + (parts[2] || '') + (parts[0] || '');
+    } else {
+      digits = raw.replace(/\D/g, '');
+    }
+    return digits.charAt(f.digit) || '';
+  }
+
+  if (f.timeComponent) {
+    const raw = data[f.key] || '';
+    const h = parseInt(raw.split(':')[0], 10);
+    if (isNaN(h)) return '';
+    const isPM = h >= 12;
+    if ((f.timeComponent === 'PM') !== isPM) return '';
+    return typeof window.bareTime === 'function' ? window.bareTime(raw) : raw;
+  }
+
+  // amPmCheck: a literal AM/PM checkbox (distinct from timeComponent, which
+  // shows the time value itself in whichever of two alternate boxes applies)
+  if (f.amPmCheck) {
+    const raw = data[f.key] || '';
+    const h = parseInt(raw.split(':')[0], 10);
+    if (isNaN(h)) return '';
+    const isPM = h >= 12;
+    return (f.amPmCheck === 'PM') === isPM ? '✓' : '';
+  }
+
+  const gcv = window.getComputedValue;
+  if (f.computed && typeof gcv === 'function') return gcv(f.computed);
+  return data[f.key] || '';
 }
 
 /* ── Update overlay text for one form ───────────────────── */
@@ -202,32 +232,9 @@ function updateOverlayForForm(formKey) {
     const span = document.getElementById('pof-' + formKey + '-' + f.id);
     if (!span) return;
 
-    span.style.display = (f.page === curPage) ? '' : 'none';
+    span.classList.toggle('pdf-field--hidden', f.page !== curPage);
 
-    let val = '';
-    const gcv = window.getComputedValue;
-    if (typeof gcv === 'function') {
-      val = f.computed ? gcv(f.computed) : (window.state?.data?.[f.key] || '');
-    } else {
-      val = window.state?.data?.[f.key] || '';
-    }
-
-    if (f.checkOptions) {
-      const checkSpans = span.querySelectorAll('.pdf-field-check');
-      checkSpans.forEach(c => {
-        c.classList.toggle('pdf-field-check--active', c.dataset.value === val);
-      });
-      return;
-    }
-
-    if (f.boxLefts) {
-      const digits = String(val).replace(/\D/g, '');
-      const digitSpans = span.querySelectorAll('.pdf-field-digit');
-      digitSpans.forEach((d, i) => { d.textContent = digits[i] || ''; });
-      span.classList.toggle('pdf-field--filled', !!digits);
-      return;
-    }
-
+    const val = resolveOverlayFieldValue(f);
     span.textContent = val;
     span.classList.toggle('pdf-field--filled', !!val);
   });
@@ -289,51 +296,19 @@ async function exportFilledPDF(formKey) {
       if (!pg) return;
       const { width, height } = pg.getSize();
 
-      let val = '';
-      const gcv2 = window.getComputedValue;
-      if (typeof gcv2 === 'function') {
-        val = f.computed ? gcv2(f.computed) : (window.state?.data?.[f.key] || '');
-      } else {
-        val = window.state?.data?.[f.key] || '';
-      }
+      const val = resolveOverlayFieldValue(f);
       if (!val) return;
-
-      if (f.checkOptions) {
-        const opt = f.checkOptions.find(o => o.value === val);
-        if (!opt) return;
-        const fs = f.fs || 9;
-        pg.drawText('X', {
-          x: (opt.left / 100) * width,
-          y: height - ((opt.top / 100) * height) - 6,
-          size: fs,
-          font: font,
-          color: PDFLib.rgb(0, 0, 0),
-        });
-        return;
-      }
+      // pdf-lib's standard Helvetica uses WinAnsi encoding, which can't
+      // represent '✓' — substitute a safe ASCII mark for the exported PDF
+      // (the on-screen overlay still renders the real checkmark glyph).
+      const safeVal = String(val).replace(/✓/g, 'X');
 
       const baselineOffset = 6; // Increase this to push text further down when printing
       const y = height - ((f.top / 100) * height) - baselineOffset;
       const fs = f.fs || 7;
-
-      if (f.boxLefts) {
-        const digits = String(val).replace(/\D/g, '');
-        f.boxLefts.forEach((boxLeft, i) => {
-          const ch = digits[i];
-          if (!ch) return;
-          pg.drawText(ch, {
-            x: (boxLeft / 100) * width,
-            y: y,
-            size: fs,
-            font: font,
-            color: PDFLib.rgb(0, 0, 0),
-          });
-        });
-        return;
-      }
-
       const x = (f.left / 100) * width;
-      pg.drawText(String(val), {
+
+      pg.drawText(safeVal, {
         x: x,
         y: y,
         size: fs,
