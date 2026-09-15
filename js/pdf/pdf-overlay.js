@@ -74,6 +74,18 @@ async function renderPDFPage(formKey, pageNum) {
   st.page = pageNum;
   scaleOverlayFonts(formKey);
   updateOverlayForForm(formKey);
+  syncEntryPanelPageGroups(formKey, pageNum);
+}
+
+/* ── Show only the Data Entry fields for the currently viewed PDF page ── */
+function syncEntryPanelPageGroups(formKey, pageNum) {
+  const panel = document.querySelector(`#section-${formKey} .entry-panel-body`);
+  if (!panel) return;
+  const groups = panel.querySelectorAll('.pdf-page-group[data-pdf-page]');
+  if (!groups.length) return;
+  groups.forEach(group => {
+    group.hidden = Number(group.dataset.pdfPage) !== pageNum;
+  });
 }
 
 /* ── Load PDF and show first page ───────────────────────── */
@@ -116,11 +128,52 @@ function injectOverlaySpans(formKey) {
   const refH = PAGE_H[formKey] || 936;
 
   (OVERLAY_MAP[formKey] || []).forEach(f => {
+    if (f.checkOptions) {
+      // Checkbox field: one checkmark span per printed box, shown only
+      // over the box matching the currently selected value.
+      const wrap = document.createElement('span');
+      wrap.className    = 'pdf-field-boxed';
+      wrap.id           = 'pof-' + formKey + '-' + f.id;
+      wrap.dataset.page = f.page;
+
+      f.checkOptions.forEach(opt => {
+        const mark = document.createElement('span');
+        mark.className     = 'pdf-field-check';
+        mark.dataset.value = opt.value;
+        mark.dataset.fsPct = (f.fs || 9) / refH;
+        mark.style.cssText = `top:${opt.top}%;left:${opt.left}%;transform:translateY(-70%);`;
+        mark.textContent   = '✔';
+        wrap.appendChild(mark);
+      });
+      overlay.appendChild(wrap);
+      return;
+    }
+
+    if (f.boxLefts) {
+      // Boxed field: one absolutely-positioned digit span per printed box,
+      // so each character lands centered inside its own box on the form.
+      const wrap = document.createElement('span');
+      wrap.className    = 'pdf-field-boxed';
+      wrap.id           = 'pof-' + formKey + '-' + f.id;
+      wrap.dataset.page = f.page;
+
+      f.boxLefts.forEach((boxLeft, i) => {
+        const digit = document.createElement('span');
+        digit.className     = 'pdf-field-digit';
+        digit.dataset.fsPct = (f.fs || 8) / refH;
+        digit.style.cssText = `top:${f.top}%;left:${boxLeft}%;transform:translateY(-70%);`;
+        digit.dataset.index = i;
+        wrap.appendChild(digit);
+      });
+      overlay.appendChild(wrap);
+      return;
+    }
+
     const span = document.createElement('span');
     span.className     = 'pdf-field';
     span.id            = 'pof-' + formKey + '-' + f.id;
     span.dataset.page  = f.page;
-    span.dataset.fsPct = (f.fs || 8) / refH; 
+    span.dataset.fsPct = (f.fs || 8) / refH;
     span.style.cssText =
       `top:${f.top}%;left:${f.left}%;width:${f.w}%;transform:translateY(-70%);`;
     overlay.appendChild(span);
@@ -133,7 +186,7 @@ function scaleOverlayFonts(formKey) {
   const overlay = document.getElementById('overlay-' + formKey);
   if (!overlay) return;
   const h = parseFloat(overlay.style.height) || overlay.getBoundingClientRect().height || 800;
-  overlay.querySelectorAll('.pdf-field').forEach(span => {
+  overlay.querySelectorAll('.pdf-field, .pdf-field-digit, .pdf-field-check').forEach(span => {
     const fsPct = parseFloat(span.dataset.fsPct) || (8 / 936);
     span.style.fontSize = Math.max(6, Math.round(fsPct * h)) + 'px';
   });
@@ -158,6 +211,23 @@ function updateOverlayForForm(formKey) {
     } else {
       val = window.state?.data?.[f.key] || '';
     }
+
+    if (f.checkOptions) {
+      const checkSpans = span.querySelectorAll('.pdf-field-check');
+      checkSpans.forEach(c => {
+        c.classList.toggle('pdf-field-check--active', c.dataset.value === val);
+      });
+      return;
+    }
+
+    if (f.boxLefts) {
+      const digits = String(val).replace(/\D/g, '');
+      const digitSpans = span.querySelectorAll('.pdf-field-digit');
+      digitSpans.forEach((d, i) => { d.textContent = digits[i] || ''; });
+      span.classList.toggle('pdf-field--filled', !!digits);
+      return;
+    }
+
     span.textContent = val;
     span.classList.toggle('pdf-field--filled', !!val);
   });
@@ -228,15 +298,45 @@ async function exportFilledPDF(formKey) {
       }
       if (!val) return;
 
-      const x = (f.left / 100) * width;
+      if (f.checkOptions) {
+        const opt = f.checkOptions.find(o => o.value === val);
+        if (!opt) return;
+        const fs = f.fs || 9;
+        pg.drawText('X', {
+          x: (opt.left / 100) * width,
+          y: height - ((opt.top / 100) * height) - 6,
+          size: fs,
+          font: font,
+          color: PDFLib.rgb(0, 0, 0),
+        });
+        return;
+      }
+
       const baselineOffset = 6; // Increase this to push text further down when printing
-      const y = height - ((f.top / 100) * height) - baselineOffset; 
+      const y = height - ((f.top / 100) * height) - baselineOffset;
       const fs = f.fs || 7;
 
+      if (f.boxLefts) {
+        const digits = String(val).replace(/\D/g, '');
+        f.boxLefts.forEach((boxLeft, i) => {
+          const ch = digits[i];
+          if (!ch) return;
+          pg.drawText(ch, {
+            x: (boxLeft / 100) * width,
+            y: y,
+            size: fs,
+            font: font,
+            color: PDFLib.rgb(0, 0, 0),
+          });
+        });
+        return;
+      }
+
+      const x = (f.left / 100) * width;
       pg.drawText(String(val), {
-        x: x, 
-        y: y, 
-        size: fs, 
+        x: x,
+        y: y,
+        size: fs,
         font: font,
         color: PDFLib.rgb(0, 0, 0),
         maxWidth: (f.w / 100) * width,

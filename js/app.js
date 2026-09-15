@@ -2,6 +2,14 @@
    PClaimAssist – Application Logic  |  Phase 1 Prototype
    Privacy-by-design: no storage, no server calls.
 ═══════════════════════════════════════════════════════════ */
+
+/* ── Auth guard: bounce to login if no active session ──────── */
+(function requireLogin() {
+  if (!sessionStorage.getItem('pca_logged_in')) {
+    window.location.replace('login.html');
+  }
+})();
+
 AOS.init({ duration: 500, once: true, offset: 30 });
 
 /* ══════════════════════════════════════════════════════════
@@ -26,10 +34,51 @@ const state = {
     dateAdmitted:'', timeAdmitted:'', amPmAdmitted:'AM',
     dateDischarge:'', timeDischarge:'', amPmDischarge:'AM',
     disposition:'', accommodation:'', chiefComplaint:'', admissionDx:'', dischargeDx:'',
+    /* CF2 – Referral */
+    referredByHCI:'', referralHciName:'', referralStreet:'', referralCity:'',
+    referralProvince:'', referralZip:'',
+    /* CF2 – Discharge Diagnosis table (2 diagnoses x up to 3 procedures each) */
+    dxADiagnosis:'', dxAIcd10:'',
+    dxAProcI:'', dxARvsI:'', dxADateI:'', dxALatI:'',
+    dxAProcII:'', dxARvsII:'', dxADateII:'', dxALatII:'',
+    dxAProcIII:'', dxARvsIII:'', dxADateIII:'', dxALatIII:'',
+    dxBDiagnosis:'', dxBIcd10:'',
+    dxBProcI:'', dxBRvsI:'', dxBDateI:'', dxBLatI:'',
+    dxBProcII:'', dxBRvsII:'', dxBDateII:'', dxBLatII:'',
+    dxBProcIII:'', dxBRvsIII:'', dxBDateIII:'', dxBLatIII:'',
     /* HCI */
     hciPAN:'', hciName:'', hciStreet:'', hciCity:'', hciProvince:'',
     /* Employer – CSF Part II */
     employerPEN:'', employerPhone:'', employerName:'',
+
+    /* CSF Part I – Certification of Member (signature block) */
+    memberSignedDate:'', repSignedDate:'',
+    memberSignerType:'', repRelationship:'', repRelationshipOther:'',
+    repReason:'', repReasonOther:'',
+    /* CSF Part II – Employer's Certification (signature) */
+    employerSignedDate:'', employerRepName:'', employerCapacity:'',
+    /* CSF Part III – Consent to Access Patient Record/s */
+    patientRepName:'', patientRepSignedDate:'',
+    patientSignerType:'', patientRepRelationship:'', patientRepRelationshipOther:'',
+    patientReason:'', patientReasonOther:'',
+    /* CSF Part IV – Health Care Professional Information (up to 3 rows) */
+    hciProf1AccredNo:'', hciProf1Name:'', hciProf1DateSigned:'',
+    hciProf2AccredNo:'', hciProf2Name:'', hciProf2DateSigned:'',
+    hciProf3AccredNo:'', hciProf3Name:'', hciProf3DateSigned:'',
+    /* CSF Part V – Provider Information and Certification */
+    csfFirstCaseRate:'', csfSecondCaseRate:'',
+    providerRepName:'', providerCapacity:'', providerSignedDate:'',
+
+    /* CF2 Item 10 – Accreditation/Signature/Date Signed + Co-pay (up to 3 rows) */
+    cf2Prof1AccredNo:'', cf2Prof1Name:'', cf2Prof1DateSigned:'', cf2Prof1Copay:'', cf2Prof1CopayAmount:'',
+    cf2Prof2AccredNo:'', cf2Prof2Name:'', cf2Prof2DateSigned:'', cf2Prof2Copay:'', cf2Prof2CopayAmount:'',
+    cf2Prof3AccredNo:'', cf2Prof3Name:'', cf2Prof3DateSigned:'', cf2Prof3Copay:'', cf2Prof3CopayAmount:'',
+    /* CF2 Part III-B – Consent to Access Patient Record/s */
+    cf2PatientRepName:'', cf2PatientRepSignedDate:'',
+    cf2PatientRepRelationship:'', cf2PatientRepRelationshipOther:'',
+    cf2PatientReason:'', cf2PatientReasonOther:'',
+    /* CF2 Part IV – Certification of Consumption of Health Care Institution */
+    cf2ProviderRepName:'', cf2ProviderCapacity:'', cf2ProviderSignedDate:'',
     /* Member Profile – PMRF */
     civilStatus:'', placeOfBirth:'', citizenship:'',
     motherLastName:'', motherFirstName:'', motherMiddleName:'',
@@ -83,7 +132,12 @@ const SAMPLE_DATA = {
 ══════════════════════════════════════════════════════════ */
 const DATE_FIELDS = new Set([
   'memberDOB','patientDOB','dateAdmitted','dateDischarge',
-  'deliveryDate','expectedDD','lmp'
+  'deliveryDate','expectedDD','lmp',
+  'dxADateI','dxADateII','dxADateIII','dxBDateI','dxBDateII','dxBDateIII',
+  'memberSignedDate','repSignedDate','employerSignedDate','patientRepSignedDate',
+  'hciProf1DateSigned','hciProf2DateSigned','hciProf3DateSigned','providerSignedDate',
+  'cf2Prof1DateSigned','cf2Prof2DateSigned','cf2Prof3DateSigned',
+  'cf2PatientRepSignedDate','cf2ProviderSignedDate',
 ]);
 
 function getComputedValue(key) {
@@ -118,6 +172,10 @@ function getComputedValue(key) {
       return formatTime12h(d.timeDischarge);
     case 'deliveryTimeStr':
       return formatTime12h(d.deliveryTime);
+    case 'timeAdmittedDigits':
+      return time12hDigits(d.timeAdmitted);
+    case 'timeDischargeDigits':
+      return time12hDigits(d.timeDischarge);
     default:
       return d[key] || '';
   }
@@ -200,7 +258,7 @@ const VAL_FIELDS = {
     { key:'disposition',   label:'Patient Disposition' },
     { key:'accommodation', label:'Type of Accommodation' },
     { key:'admissionDx',   label:'Admission Diagnosis' },
-    { key:'dischargeDx',   label:'Discharge Diagnosis' },
+    { key:'dxADiagnosis',  label:'Discharge Diagnosis' },
   ],
   cf3: [
     { key:'hciPAN',           label:'HCI Accreditation No. (PAN)' },
@@ -229,7 +287,10 @@ const VAL_FIELDS = {
 /* ══════════════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════════════ */
-function navigateTo(section) {
+const VALID_SECTIONS = ['dashboard','patient','documents','csf','cf2','cf3','pmrf','validation','settings'];
+
+function navigateTo(section, opts) {
+  opts = opts || {};
   const prev = document.querySelector('.content-section.active');
   if (prev) prev.classList.remove('active');
   const next = document.getElementById('section-' + section);
@@ -237,6 +298,9 @@ function navigateTo(section) {
   document.querySelectorAll('.sidebar-item').forEach(el =>
     el.classList.toggle('active', el.dataset.section === section));
   state.currentSection = section;
+  if (!opts.skipHash) {
+    history.replaceState(null, '', '#' + section);
+  }
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   if (sidebar.classList.contains('mobile-open')) {
@@ -253,6 +317,28 @@ function navigateTo(section) {
 
 document.querySelectorAll('.sidebar-item').forEach(item =>
   item.addEventListener('click', e => { e.preventDefault(); navigateTo(item.dataset.section); }));
+
+/* ══════════════════════════════════════════════════════════
+   PROFILE MENU & LOGOUT
+══════════════════════════════════════════════════════════ */
+(function setupProfileMenu() {
+  const email = sessionStorage.getItem('pca_user_email') || 'staff@clinic.ph';
+  const emailEl = document.getElementById('navUserEmail');
+  if (emailEl) emailEl.textContent = email;
+
+  document.querySelectorAll('.profile-dropdown-menu [data-section]').forEach(item =>
+    item.addEventListener('click', e => { e.preventDefault(); navigateTo(item.dataset.section); }));
+
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', e => {
+      e.preventDefault();
+      sessionStorage.removeItem('pca_logged_in');
+      sessionStorage.removeItem('pca_user_email');
+      window.location.href = 'login.html';
+    });
+  }
+})();
 
 (function setupMobileSidebar() {
   if (!document.getElementById('sidebarOverlay')) {
@@ -322,7 +408,49 @@ function syncAllAutofillElements() {
       }
     });
   });
+  syncBtnCheckGroups();
 }
+
+/* ══════════════════════════════════════════════════════════
+   BUTTON-CHECK GROUPS (e.g. CSF Relationship: child/parent/spouse)
+══════════════════════════════════════════════════════════ */
+function syncBtnCheckGroups() {
+  document.querySelectorAll('.btn-check-group[data-autofill]').forEach(group => {
+    const key = group.dataset.autofill;
+    const val = state.data[key] || '';
+    group.querySelectorAll('.btn-check-option').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.value === val);
+    });
+  });
+
+  const referralDetails = document.getElementById('cf2-referral-details');
+  if (referralDetails) referralDetails.style.display = state.data.referredByHCI === 'Yes' ? '' : 'none';
+}
+
+const AMPM_TIME_KEY = { amPmAdmitted: 'timeAdmitted', amPmDischarge: 'timeDischarge', amPmDelivery: 'deliveryTime' };
+
+document.querySelectorAll('.btn-check-group[data-autofill]').forEach(group => {
+  const key = group.dataset.autofill;
+  group.querySelectorAll('.btn-check-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const alreadyActive = btn.classList.contains('active');
+      const newVal = alreadyActive ? '' : btn.dataset.value;
+      state.data[key] = newVal;
+
+      const timeKey = AMPM_TIME_KEY[key];
+      if (timeKey && newVal && state.data[timeKey]) {
+        const [hStr, mStr] = state.data[timeKey].split(':');
+        let h = parseInt(hStr, 10);
+        if (!isNaN(h)) {
+          h = h % 12;
+          if (newVal === 'PM') h += 12;
+          state.data[timeKey] = `${String(h).padStart(2, '0')}:${mStr}`;
+        }
+      }
+      updateFormPreviews();
+    });
+  });
+});
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -341,6 +469,15 @@ function formatTime12h(hhmm) {
   const period = h >= 12 ? 'PM' : 'AM';
   h = h % 12 || 12;
   return `${String(h).padStart(2, '0')}:${mStr} ${period}`;
+}
+
+function time12hDigits(hhmm) {
+  if (!hhmm) return '';
+  const [hStr, mStr] = hhmm.split(':');
+  let h = parseInt(hStr, 10);
+  if (isNaN(h)) return '';
+  h = h % 12 || 12;
+  return `${String(h).padStart(2, '0')}${mStr}`;
 }
 
 function bindInputListeners() {
@@ -676,7 +813,16 @@ function escHtml(str) {
 ══════════════════════════════════════════════════════════ */
 bindInputListeners();
 updateFormPreviews();
-navigateTo('dashboard');
+
+const initialSection = VALID_SECTIONS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'dashboard';
+navigateTo(initialSection);
+
+window.addEventListener('hashchange', () => {
+  const section = location.hash.slice(1);
+  if (VALID_SECTIONS.includes(section) && section !== state.currentSection) {
+    navigateTo(section, { skipHash: true });
+  }
+});
 
 // Add this at the very bottom of js/app.js
 window.state = state;
