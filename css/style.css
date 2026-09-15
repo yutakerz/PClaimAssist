@@ -1355,6 +1355,12 @@ body {
   overflow: hidden;
   max-height: 8em;
 }
+/* Per-character digit boxes (PAN, some date groups) centered within their
+   printed cell instead of hugging the left edge */
+.pdf-field--center {
+  justify-content: center;
+  text-align: center;
+}
 
 /* ── RIGHT: Data entry panel ─────────────────────────────── */
 .form-entry-panel {

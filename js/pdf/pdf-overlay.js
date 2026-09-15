@@ -117,7 +117,7 @@ function injectOverlaySpans(formKey) {
 
   (OVERLAY_MAP[formKey] || []).forEach(f => {
     const span = document.createElement('span');
-    span.className     = 'pdf-field' + (f.wrap ? ' pdf-field--wrap' : '');
+    span.className     = 'pdf-field' + (f.wrap ? ' pdf-field--wrap' : '') + (f.center ? ' pdf-field--center' : '');
     span.id            = 'pof-' + formKey + '-' + f.id;
     span.dataset.page  = f.page;
     span.dataset.fsPct = (f.fs || 8) / refH;
